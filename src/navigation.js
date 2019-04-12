@@ -86,7 +86,7 @@ export const goLogin = () => {
   Navigation.setRoot({
     root: {
       component: {
-        name: 'Home'
+        name: 'Login'
       }
     },
   });
