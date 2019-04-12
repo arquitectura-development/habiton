@@ -13,8 +13,8 @@ class App extends Component {
 	
 	startApp() {
 		Navigation.events().registerAppLaunchedListener(() => {
-			goLogin();
-			//goHome();
+			//goLogin();
+			goHome();
 		});
 	}
 

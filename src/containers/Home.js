@@ -8,6 +8,22 @@ import {
 import { goHome } from '../navigation'
 
 export default class Home extends Component {
+
+
+  static options(passProps) {
+    return {
+      topBar: {
+        title: {
+          text: 'My Screen'
+        },
+        drawBehind: false,
+        visible: true,
+        animate: false
+      }
+    };
+  }
+
+
   render() {
     return (
         <View style={styles.container}>

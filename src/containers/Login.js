@@ -25,7 +25,7 @@ export default class Login extends Component {
     login = async() => {
         const { email } = this.state;
         this.setState({isLoading: true});
-        //goHome();
+        goHome();
         // AppUser.logon(email).then(res =>{
         //     goHome();
         //     this.setState({isLoading: false});

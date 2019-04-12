@@ -8,72 +8,101 @@ export const goHome = () => {
           id: 'HomeBottomTabs',
           children: [
             {
-              component: {
-                name: 'Home',
-                options: {
-                  bottomTab: {
-                    fontSize: 11,
-                    text: 'Habits',
-                    icon: require("./assets/icons/habits.png"),
-                    selectedIcon: require("./assets/icons/fill_habits.png"),
-                    iconColor: DEFAULT_GRAY,
-                    selectedIconColor: MAIN_THEME_COLOR,
-                    textColor: DEFAULT_GRAY,
-                    selectedTextColor: MAIN_THEME_COLOR
+              stack:{
+                children:[
+                  {
+                    component: {
+                      name: 'Home',
+                      options: {
+                        bottomTab: {
+                          fontSize: 11,
+                          text: 'Habits',
+                          icon: require("./assets/icons/habits.png"),
+                          selectedIcon: require("./assets/icons/fill_habits.png"),
+                          iconColor: DEFAULT_GRAY,
+                          selectedIconColor: MAIN_THEME_COLOR,
+                          textColor: DEFAULT_GRAY,
+                          selectedTextColor: MAIN_THEME_COLOR
+                        },
+                        topBar: {
+                          title: {
+                            text: "MEEPERSSS"
+                          }
+                        }
+                      }
+                    }
                   }
-                }
-              },
+                ]
+              }
             },
             {
-              component: {
-                name: 'Home',
-                options: {
-                  bottomTab: {
-                    text: 'Tasks',
-                    fontSize: 11,
-                    icon: require("./assets/icons/tasks.png"),
-                    selectedIcon: require("./assets/icons/fill_tasks.png"),
-                    iconColor: DEFAULT_GRAY,
-                    selectedIconColor: MAIN_THEME_COLOR,
-                    textColor: DEFAULT_GRAY,
-                    selectedTextColor: MAIN_THEME_COLOR
+              stack:{
+                children:[
+                  {
+                    component: {
+                      name: 'Home',
+                      options: {
+                        bottomTab: {
+                          text: 'Tasks',
+                          fontSize: 11,
+                          icon: require("./assets/icons/tasks.png"),
+                          selectedIcon: require("./assets/icons/fill_tasks.png"),
+                          iconColor: DEFAULT_GRAY,
+                          selectedIconColor: MAIN_THEME_COLOR,
+                          textColor: DEFAULT_GRAY,
+                          selectedTextColor: MAIN_THEME_COLOR
+                        }
+                      }
+                    },
                   }
-                }
-              },
+                ]
+              }
             },
             {
-              component: {
-                name: 'Home',
-                options: {
-                  bottomTab: {
-                    text: 'Reports',
-                    fontSize: 11,
-                    icon: require("./assets/icons/chart.png"),
-                    selectedIcon: require("./assets/icons/fill_chart.png"),
-                    iconColor: DEFAULT_GRAY,
-                    selectedIconColor: MAIN_THEME_COLOR,
-                    textColor: DEFAULT_GRAY,
-                    selectedTextColor: MAIN_THEME_COLOR
-                  }
-                }
-              },
+              stack:{
+                children:[
+                  {
+                    component: {
+                      name: 'Reports',
+                      options: {
+                        bottomTab: {
+                          text: 'Reports',
+                          fontSize: 11,
+                          icon: require("./assets/icons/chart.png"),
+                          selectedIcon: require("./assets/icons/fill_chart.png"),
+                          iconColor: DEFAULT_GRAY,
+                          selectedIconColor: MAIN_THEME_COLOR,
+                          textColor: DEFAULT_GRAY,
+                          selectedTextColor: MAIN_THEME_COLOR
+                        }
+                      }
+                    },
+                  },
+                ]
+              }
             },
             {
-              component: {
-                name: 'Home',
-                options: {
-                  bottomTab: {
-                    text: 'Settings',
-                    fontSize: 11,
-                    icon: require("./assets/icons/settings.png"),
-                    selectedIcon: require("./assets/icons/fill_settings.png"),
-                    iconColor: DEFAULT_GRAY,
-                    selectedIconColor: MAIN_THEME_COLOR,
-                    textColor: DEFAULT_GRAY,
-                    selectedTextColor: MAIN_THEME_COLOR
+              stack:{
+                children:[
+                  {
+                    component: {
+                      name: 'Settings',
+                      options: {
+                        bottomTab: {
+                          text: 'Settings',
+                          fontSize: 11,
+                          icon: require("./assets/icons/settings.png"),
+                          selectedIcon: require("./assets/icons/fill_settings.png"),
+                          iconColor: DEFAULT_GRAY,
+                          selectedIconColor: MAIN_THEME_COLOR,
+                          textColor: DEFAULT_GRAY,
+                          selectedTextColor: MAIN_THEME_COLOR
+                        }
+                      }
+                    },
                   }
-                }
-              },
+                ]
+              }
             }
           ],
         }

@@ -9,6 +9,7 @@
     "build:android": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res"
   },
   "dependencies": {
+    "native-base": "^2.12.1",
     "react": "16.6.3",
     "react-native": "0.58.4",
     "react-native-navigation": "^2.12.0"
