@@ -10,19 +10,41 @@ import {
     TabHeading, 
     Icon, 
     Text, 
-    Accordion,  
     List,
     ListItem,
-    View
+    Card, 
+    CardItem, 
+    Body,
+    Left,
+    Right,
+    Switch,
+    Button ,
+    Thumbnail
 } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import { MAIN_THEME_COLOR } from '../constants';
 
-const dataArray = [
-    { title: "First Element", content: "Lorem ipsum dolor sit amet" },
-    { title: "Second Element", content: "Lorem ipsum dolor sit amet" },
-    { title: "Third Element", content: "Lorem ipsum dolor sit amet" }
-  ];
+
+class RateCard extends Component {
+    render() {
+      const { title, habitName, personName } = this.props;
+      return(
+        <Card>
+          <CardItem >
+            <Body>
+            <Text>{title}</Text>
+              <Text>
+                {habitName}
+              </Text>
+              <Text>
+                {personName}
+              </Text>
+            </Body>
+          </CardItem>
+        </Card>
+      )
+    }
+  }
 
 class TasksReport extends Component {
     render() {
@@ -86,8 +108,49 @@ class TasksReport extends Component {
         return (
           <Container>
             <Content padder>
-              <Accordion dataArray={dataArray} animation={true}
-            expanded={1}/>
+              {/* <Grid>
+                <Col>
+                      <RateCard 
+                    title="BEST"
+                    habitName="Eat healthy"
+                    personName="Luis Pérez"
+                  />
+                </Col>
+                <Col>
+                    <RateCard 
+                  title="WORST"
+                  habitName="Smoke"
+                  personName="Jaime Gómez"
+                />
+                </Col>
+              </Grid>
+          */}
+          <List>
+            <ListItem itemHeader first>
+              <Text>BEST</Text>
+            </ListItem>
+            <ListItem >
+            <Button style={{ backgroundColor: "#00C7D7", width: 5 }}>
+              </Button>
+              <Body>
+                <Text style={{ fontSize: 14, fontWeight:'400' }}>Eat healthy</Text>
+                <Text note style={{ fontSize: 14, fontWeight:'300' }}>Luis Godinez</Text>
+              </Body>
+            </ListItem>
+            <ListItem itemHeader first>
+              <Text>WORST</Text>
+            </ListItem>
+            <ListItem last>
+            <Button style={{ backgroundColor: "#EC5D62", width: 5 }}>
+              </Button>
+              <Body>
+                <Text style={{ fontSize: 14, fontWeight:'400' }}>Smoke</Text>
+                <Text note style={{ fontSize: 14, fontWeight:'300' }}>Scarlett Pérez</Text>
+              </Body>
+            </ListItem>
+          </List>
+      
+            
             </Content>
           </Container>
         );

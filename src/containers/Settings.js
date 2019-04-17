@@ -78,6 +78,7 @@ const styles = StyleSheet.create({
     height: '100%',
     flex: 1,
     backgroundColor: '#F0EFF5',
-    zIndex: -10
+    zIndex: -10,
+    marginTop: -5
   }
 })
