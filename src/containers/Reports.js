@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {
-  StyleSheet
+  StyleSheet,
+  View
 } from 'react-native'
 import { 
     Container, 
@@ -23,28 +24,7 @@ import {
 } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import { MAIN_THEME_COLOR } from '../constants';
-
-
-class RateCard extends Component {
-    render() {
-      const { title, habitName, personName } = this.props;
-      return(
-        <Card>
-          <CardItem >
-            <Body>
-            <Text>{title}</Text>
-              <Text>
-                {habitName}
-              </Text>
-              <Text>
-                {personName}
-              </Text>
-            </Body>
-          </CardItem>
-        </Card>
-      )
-    }
-  }
+import { VictoryBar, VictoryChart } from "victory-native";
 
 class TasksReport extends Component {
     render() {
@@ -105,52 +85,70 @@ class TasksReport extends Component {
 
   class HabitsReport extends Component {
     render() {
+        const data = [
+          { quarter: "Red", earnings: 30 },
+          { quarter: "Orange", earnings: 50 },
+          { quarter: "Yellow", earnings: 55 },
+          { quarter: "Green", earnings: 25 },
+          { quarter: "Blue", earnings: 5 }
+        ];
         return (
           <Container>
             <Content padder>
-              {/* <Grid>
-                <Col>
-                      <RateCard 
-                    title="BEST"
-                    habitName="Eat healthy"
-                    personName="Luis Pérez"
-                  />
-                </Col>
-                <Col>
-                    <RateCard 
-                  title="WORST"
-                  habitName="Smoke"
-                  personName="Jaime Gómez"
-                />
-                </Col>
-              </Grid>
-          */}
+         
           <List>
             <ListItem itemHeader first>
-              <Text>BEST</Text>
+              <Text>TOP HABITS</Text>
             </ListItem>
-            <ListItem >
-            <Button style={{ backgroundColor: "#00C7D7", width: 5 }}>
-              </Button>
-              <Body>
-                <Text style={{ fontSize: 14, fontWeight:'400' }}>Eat healthy</Text>
-                <Text note style={{ fontSize: 14, fontWeight:'300' }}>Luis Godinez</Text>
-              </Body>
-            </ListItem>
-            <ListItem itemHeader first>
-              <Text>WORST</Text>
-            </ListItem>
-            <ListItem last>
-            <Button style={{ backgroundColor: "#EC5D62", width: 5 }}>
-              </Button>
-              <Body>
-                <Text style={{ fontSize: 14, fontWeight:'400' }}>Smoke</Text>
-                <Text note style={{ fontSize: 14, fontWeight:'300' }}>Scarlett Pérez</Text>
-              </Body>
-            </ListItem>
+              <Grid>
+                <View style={{ fontSize: 12, fontWeight:'300', marginTop: 10 }}>
+                  <Row>
+                    <Text style={{ fontSize: 12, fontWeight:'300', marginBottom: 3 }}>BEST</Text>
+                  </Row>
+                  <Row>
+                      <View style={{ backgroundColor: "#00C7D7", width: 4 }}/>
+                    <Col style={{ width: '100%', marginLeft: 8 }}>
+                      <Text style={{ fontSize: 14, fontWeight:'400' }}>Eat healthy</Text>
+                      <Text note style={{ fontSize: 14, fontWeight:'300' }}>Luis Godinez</Text>
+                    </Col>
+                  </Row>
+                </View>
+                </Grid>
+                <Grid>
+                <View style={{ fontSize: 12, fontWeight:'300', marginTop: 15, marginBottom: 20  }}>
+                  <Row>
+                    <Text style={{ fontSize: 12, fontWeight:'300', marginBottom: 3 }}>WORST</Text>
+                  </Row>
+                  <Row>
+                      <View style={{ backgroundColor: "#EC5D62", width: 4 }}/>
+                    <Col style={{ width: '100%', marginLeft: 8 }}>
+                      <Text style={{ fontSize: 14, fontWeight:'400' }}>Smoke</Text>
+                      <Text note style={{ fontSize: 14, fontWeight:'300' }}>Scarlett Pérez</Text>
+                    </Col>
+                  </Row>
+                </View>
+              </Grid>
           </List>
-      
-            
+          <ListItem itemHeader first style={{ marginBottom: -30  }}>
+              <Text>ALL HABITS</Text>
+            </ListItem>
+          <VictoryChart 
+            domainPadding={30}
+             >
+          <VictoryBar 
+            data={data} 
+            x="quarter" 
+            y="earnings" 
+            style={{
+              data: {
+                fill: MAIN_THEME_COLOR,
+                stroke: MAIN_THEME_COLOR,
+                fillOpacity: 0.7,
+                strokeWidth: 1
+              }
+            }}
+          />
+        </VictoryChart>
             </Content>
           </Container>
         );
@@ -246,5 +244,12 @@ const styles = StyleSheet.create({
   },
   subListRow: {
       marginBottom: 10
+  },
+  itemBodyText: { 
+    fontSize: 14, 
+    fontWeight:'400', 
+    textAlign:'left', 
+    alignSelf: 'stretch', 
+    marginLeft: 10 
   }
 })
