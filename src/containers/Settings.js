@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import {
   StyleSheet,
-  TouchableOpacity
+  TouchableOpacity,
+  View,
+  Platform
 } from 'react-native'
 import { Container, Content, ListItem, Text, Separator } from 'native-base';
 
@@ -26,6 +28,7 @@ export default class Settings extends Component {
   render() {
     return (
         <Container>
+           <View/> 
             <Content
             scrollEnabled={false}
             >
@@ -45,6 +48,7 @@ export default class Settings extends Component {
           </Separator>
           <ListItem>
             <TouchableOpacity
+              style={styles.touchableButton}
               onPress={console.log("hdsuaj")}
             >
               <Text>Logout </Text>
@@ -52,15 +56,14 @@ export default class Settings extends Component {
           </ListItem>
           <ListItem last>
             <TouchableOpacity
+              style={styles.touchableButton}
               onPress={console.log("hdsuaj")}
             >
               <Text>Delete account </Text>
             </TouchableOpacity>
           </ListItem>
-          <Separator >
-          </Separator>     
         </Content>
-        <Content style={styles.finalSeparator}/>
+        < View style={styles.finalSeparator} /> 
        </Container>
     )
   }
@@ -79,6 +82,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F0EFF5',
     zIndex: -10,
-    marginTop: -5
+    ...Platform.select({
+      ios: {
+        marginTop: -75
+      }
+    })
+  },
+  touchableButton: {
+    width: '100%',
+    height: '100%',
+    flexDirection: 'row',
+    textAlign: 'left'
   }
 })

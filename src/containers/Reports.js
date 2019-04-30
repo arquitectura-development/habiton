@@ -227,7 +227,8 @@ const styles = StyleSheet.create({
   textHeaderRight:{
     color: '#101010',
     fontWeight: '600',
-    fontSize: 16
+    fontSize: 16,
+    marginRight: 10
   },
   listItemLeft:{
     flex: 1,
@@ -235,11 +236,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   },
   textItemRight:{
-    color: '#8F8E94'
+    color: '#8F8E94',
+    marginRight: 10
   },
   subListContainer: {
       marginTop: 5,
       padding: 10,
+      paddingRight: 0,
       backgroundColor: '#F4F4F4'
   },
   subListRow: {
