@@ -12,7 +12,7 @@ export const goHome = () => {
                 children:[
                   {
                     component: {
-                      name: 'Home',
+                      name: 'Habits',
                       options: {
                         bottomTab: {
                           fontSize: 11,
@@ -23,11 +23,6 @@ export const goHome = () => {
                           selectedIconColor: MAIN_THEME_COLOR,
                           textColor: DEFAULT_GRAY,
                           selectedTextColor: MAIN_THEME_COLOR
-                        },
-                        topBar: {
-                          title: {
-                            text: "MEEPERSSS"
-                          }
                         }
                       }
                     }
