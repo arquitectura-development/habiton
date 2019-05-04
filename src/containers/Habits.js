@@ -64,7 +64,6 @@ class HabitItem extends Component {
         }
     }
 
-    getCategoryColor 
     render() {
         const { title, score } = this.props;
         return (

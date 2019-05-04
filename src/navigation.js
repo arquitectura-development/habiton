@@ -35,7 +35,7 @@ export const goHome = () => {
                 children:[
                   {
                     component: {
-                      name: 'Home',
+                      name: 'Tasks',
                       options: {
                         bottomTab: {
                           text: 'Tasks',

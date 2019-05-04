@@ -6,6 +6,7 @@ import Login from './containers/Login';
 import Settings from './containers/Settings';
 import Reports from './containers/Reports';
 import Habits from './containers/Habits';
+import Tasks from './containers/Tasks';
 
 export function registerScreens() {
   Navigation.registerComponent('Home', () => Home);
@@ -13,4 +14,5 @@ export function registerScreens() {
   Navigation.registerComponent('Settings', () => Settings);
   Navigation.registerComponent('Reports', () => Reports);
   Navigation.registerComponent('Habits', () => Habits);
+  Navigation.registerComponent('Tasks', () => Tasks);
 }
