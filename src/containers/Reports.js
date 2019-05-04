@@ -26,6 +26,49 @@ import { Col, Row, Grid } from 'react-native-easy-grid';
 import { MAIN_THEME_COLOR } from '../constants';
 import { VictoryBar, VictoryChart } from "victory-native";
 
+const USER = "jadmin@admin.com";
+const ISADMIN = (USER === "admin@admin.com") ? true : false;
+
+class UsersReport extends Component {
+  render() {
+      return (
+        <Container>
+          <Content padder>
+            <List>
+              <ListItem itemHeader>
+                <Text style={styles.textHeaderLeft}>TASKS DUE TODAY</Text>
+              </ListItem>
+              <ListItem>
+                <Text style={styles.listItemLeft}>TDD task</Text>
+              </ListItem>
+              <ListItem>
+                <Text style={styles.listItemLeft}>Refactor</Text>
+              </ListItem>
+              <ListItem itemHeader >
+                <Text style={styles.textHeaderLeft}>DELAYED TASKS</Text>
+              </ListItem>
+              <ListItem>
+                <Text style={styles.listItemLeft}>Architecture quiz</Text>
+              </ListItem>
+              <ListItem itemHeader>
+                <Text style={styles.textHeaderLeft}>GOOD HABITS</Text>
+              </ListItem>
+              <ListItem>
+                <Text style={styles.listItemLeft}>Write clean code</Text>
+              </ListItem>
+              <ListItem itemHeader>
+                <Text style={styles.textHeaderLeft}>BAD HABITS</Text>
+              </ListItem>
+              <ListItem>
+                <Text style={styles.listItemLeft}>Write magic numbers</Text>
+              </ListItem>
+            </List>
+          </Content>
+        </Container>
+      );
+  }
+}
+
 class TasksReport extends Component {
     render() {
         return (
@@ -95,7 +138,6 @@ class TasksReport extends Component {
         return (
           <Container>
             <Content padder>
-         
           <List>
             <ListItem itemHeader first>
               <Text>TOP HABITS</Text>
@@ -160,7 +202,7 @@ export default class Reports extends Component {
     return {
       topBar: {
         title: {
-          text: 'Reports'
+          text: ISADMIN ? 'Reports' : 'Report'
         },
         largeTitle: {
           visible: true,
@@ -174,30 +216,39 @@ export default class Reports extends Component {
   }
 
   render() {
-    return (
+    if(ISADMIN){
+      return (
+          <Container style={styles.container}>
+            <Tabs 
+                style={styles.tabs} 
+                tabBarUnderlineStyle={styles.underlineTab}>
+              <Tab 
+                heading={ 
+                <TabHeading style={styles.tabHeading}>
+                    <Icon name="trophy" style={styles.tab}/>
+                    <Text style={styles.tab}>Habits</Text>
+                </TabHeading>}>
+                <HabitsReport />
+              </Tab>
+              <Tab 
+                heading={ 
+                <TabHeading style={styles.tabHeading}>
+                    <Icon name="star" style={styles.tab}/>
+                    <Text style={styles.tab}>Tasks</Text>
+                </TabHeading>}>
+                <TasksReport />
+              </Tab>
+            </Tabs>  
+        </Container>
+      );
+    }
+    else {
+      return (
         <Container style={styles.container}>
-        <Tabs 
-            style={styles.tabs} 
-            tabBarUnderlineStyle={styles.underlineTab}>
-          <Tab 
-            heading={ 
-            <TabHeading style={styles.tabHeading}>
-                <Icon name="trophy" style={styles.tab}/>
-                <Text style={styles.tab}>Habits</Text>
-            </TabHeading>}>
-            <HabitsReport />
-          </Tab>
-          <Tab 
-            heading={ 
-            <TabHeading style={styles.tabHeading}>
-                <Icon name="star" style={styles.tab}/>
-                <Text style={styles.tab}>Tasks</Text>
-            </TabHeading>}>
-            <TasksReport />
-          </Tab>
-        </Tabs>  
-      </Container>
-    )
+          <UsersReport />
+        </Container>
+      )
+    }
   }
 }
 
