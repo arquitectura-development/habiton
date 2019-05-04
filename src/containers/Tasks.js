@@ -4,18 +4,27 @@ import {
   TouchableOpacity,
   View,
   ScrollView,
-  Platform
+  Platform,
+  FlatList
 } from 'react-native'
 import { Text, Icon, CheckBox } from 'native-base';
 import { MAIN_THEME_COLOR } from '../constants';
 
 let tasks = [
     {
+        id: 1,
         title: 'Complete final project',
         description: 'Smart cities',
         done: false,
         dueDate: new Date(),
         reminder: new Date()
+    },
+    {
+        id: 2,
+        title: 'Finish homework',
+        description: 'Task 4 - Cyber security',
+        done: true,
+        dueDate: new Date("7/05/2019")
     }
 ]
 
@@ -44,6 +53,17 @@ class TaskItem extends Component {
         }
     }
 
+    renderReminder = () => {
+        const { reminder } = this.state.task;
+        if(reminder){
+            return ( 
+                <Icon name='alarm' style={styles.alarmIcon}/>
+            )
+        }else{
+            return null;
+        }
+    }
+
     render() {
         const { task } = this.state;
         if(!task) return null;
@@ -53,7 +73,7 @@ class TaskItem extends Component {
                     <View>
                         <Text style={styles.taskTitle}>{task.title}</Text>
                         <Text style={styles.taskDescription}>{task.description}</Text>
-                        <Icon name='alarm' style={styles.alarmIcon}/>
+                        { this.renderReminder() }
                     </View>
                     { this.renderDueDate() }
                 </View>
@@ -76,7 +96,7 @@ class TaskItem extends Component {
     }
 }
 
-export default class Reports extends Component {
+export default class Tasks extends Component {
   static get options() {
     let iconByPlatform = Platform.OS === 'ios' ? {systemItem: 'add'} : {icon: require('../assets/icons/add.png')};
     return {
@@ -103,14 +123,23 @@ export default class Reports extends Component {
     };
   }
 
+  constructor(props) {
+    super(props);
+    this.state = { 
+        tasks : tasks
+    };
+  }
+
+
   render() {
+
     return (
         <ScrollView style={styles.contentContainer}>
-            <TaskItem
-                task={tasks[0]}
-            ></TaskItem>
-        
-         
+            <FlatList 
+                data={tasks}
+                renderItem={({item}) => <TaskItem task={item}/>}
+                keyExtractor={item => item.id.toString()}
+            />
         </ScrollView>
     )
   }
