@@ -164,7 +164,9 @@ async componentDidMount() {
               <Label style={styles.label}>Title*</Label>
               <Input 
                 style={styles.inputText}
-                placeholder="Final individual activity" 
+                placeholder="Ej. Final individual activity" 
+                onChangeText={val => this.onValueChange('title', val)}
+                value={ title }
                 />
             </Item>
             <Item stackedLabel last>
@@ -172,6 +174,11 @@ async componentDidMount() {
               <Input 
                 style={styles.inputText}
                 placeholder="Citizenship class"
+                multiline={true}
+                numberOfLines={2}
+                textAlignVertical="top"
+                onChangeText={ val => this.onValueChange('description', val)}
+                value={ description }
                 />
             </Item>
             <ListItem itemHeader style={styles.divider}>
