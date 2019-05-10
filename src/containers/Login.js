@@ -11,6 +11,7 @@ import {
   ActivityIndicator
 } from "react-native";
 import { goHome } from '../navigation';
+import AppUser from "../models/AppUser";
 
 export default class Login extends Component {
     constructor(props) {
@@ -26,19 +27,19 @@ export default class Login extends Component {
         const { email } = this.state;
         this.setState({isLoading: true});
         goHome();
-        // AppUser.logon(email).then(res =>{
-        //     goHome();
-        //     this.setState({isLoading: false});
-        // }).catch(e => {
-        //     let title = "Error";
-        //     let subtitle = "Ocurrió un problema, intenta más tarde.";
-        //     if(e.statusCode == 401){
-        //         title="Error de autenticación";
-        //         subtitle="Usuario o contraseña incorrecta.";
-        //     }
-        //     Alert.alert(title, subtitle);
-        //     this.setState({isLoading: false});
-        // })
+        AppUser.logon(email).then(res =>{
+            goHome();
+            this.setState({isLoading: false});
+        }).catch(e => {
+            let title = "Error";
+            let subtitle = "Ocurrió un problema, intenta más tarde.";
+            if(e.statusCode == 401){
+                title="Error de autenticación";
+                subtitle="Usuario o contraseña incorrecta.";
+            }
+            Alert.alert(title, subtitle);
+            this.setState({isLoading: false});
+        })
     }
 
     setEmail = (email) => {

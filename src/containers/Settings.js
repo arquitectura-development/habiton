@@ -6,6 +6,8 @@ import {
   Platform
 } from 'react-native'
 import { Container, Content, ListItem, Text, Separator } from 'native-base';
+import AppUser from "../models/AppUser";
+import { goLogin } from '../navigation';
 
 export default class Settings extends Component {
   static get options() {
@@ -25,6 +27,11 @@ export default class Settings extends Component {
     };
   }
 
+  logout = () => {
+    goLogin();
+    AppUser.logout();
+  }
+
   render() {
     return (
         <Container>
@@ -37,11 +44,11 @@ export default class Settings extends Component {
           </Separator>
           <ListItem>
             <Text style={styles.textItemLeft}>Name</Text>
-            <Text>Meeper</Text>
+            <Text>{AppUser.name}</Text>
           </ListItem>
           <ListItem last>
             <Text style={styles.textItemLeft}>Email</Text>
-            <Text>meeper@meep.com</Text>
+            <Text>{AppUser.email}</Text>
           </ListItem>
           <Separator >
             <Text>Other</Text>
@@ -49,7 +56,7 @@ export default class Settings extends Component {
           <ListItem>
             <TouchableOpacity
               style={styles.touchableButton}
-              onPress={console.log("hdsuaj")}
+              onPress={async () => { this.logout() }}
             >
               <Text>Logout </Text>
             </TouchableOpacity>
