@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
 import {
   StyleSheet,
-  TouchableOpacity,
   View,
   ScrollView,
   Platform,
-  FlatList
+  FlatList,
+  TouchableHighlight,
+  TouchableOpacity
 } from 'react-native'
 import { Text, Icon, CheckBox } from 'native-base';
 import { MAIN_THEME_COLOR } from '../constants';
+import { Navigation } from 'react-native-navigation';
 
 let tasks = [
     {
@@ -35,6 +37,21 @@ class TaskItem extends Component {
             task : props.task
         };
       }
+    
+    editTask = () => {
+        Navigation.showModal({
+            stack: {
+              children: [{
+                component: {
+                  name: 'TaskForm',
+                  passProps: {
+                    task: this.state.task
+                  }
+                }
+              }]
+            }
+        });
+    }
 
     renderDueDate = () => {
         const { dueDate } = this.state.task;
@@ -69,6 +86,7 @@ class TaskItem extends Component {
         if(!task) return null;
         return (
             <View style={styles.taskContainer}>
+                <TouchableOpacity style={styles.taskTouchable} onPress={this.editTask} >
                 <View style={styles.taskInfo}>
                     <View>
                         <Text style={styles.taskTitle}>{task.title}</Text>
@@ -77,6 +95,8 @@ class TaskItem extends Component {
                     </View>
                     { this.renderDueDate() }
                 </View>
+                </TouchableOpacity>
+               
                 <View style={styles.checkBoxContainer}>
                     <CheckBox
                         style={{backgroundColor: (!task.done) ? 'white' : 'blue'}}
@@ -125,9 +145,25 @@ export default class Tasks extends Component {
 
   constructor(props) {
     super(props);
+    Navigation.events().bindComponent(this);
     this.state = { 
         tasks : tasks
     };
+  }
+
+
+  navigationButtonPressed({ buttonId }) {
+      if(buttonId == 'addHabitButton'){
+        Navigation.showModal({
+            stack: {
+              children: [{
+                component: {
+                  name: 'TaskForm'
+                }
+              }]
+            }
+          });
+      }
   }
 
 
@@ -169,6 +205,9 @@ const styles = StyleSheet.create({
           padding: 15,
           flexDirection: 'column',
           justifyContent: 'space-between',
+          flex: 1
+      },
+      taskTouchable:{
           flex: 1
       },
       taskTitle: {

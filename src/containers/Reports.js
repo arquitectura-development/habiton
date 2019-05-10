@@ -245,7 +245,8 @@ export default class Reports extends Component {
     else {
       return (
         <Container style={styles.container}>
-          <UsersReport />
+          <View/> 
+          <UsersReport/>
         </Container>
       )
     }
