@@ -3,7 +3,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
-  Platform
+  Platform,
+  Alert
 } from 'react-native'
 import { Container, Content, ListItem, Text, Separator } from 'native-base';
 import AppUser from "../models/AppUser";
@@ -31,6 +32,27 @@ export default class Settings extends Component {
     goLogin();
     AppUser.logout();
   }
+
+  deleteAccount = () => {
+    goLogin();
+    AppUser.deleteAccount();
+  }
+
+  showDeleteAlert = () => {
+    Alert.alert(
+      'Delete account',
+      'If you continue you won\'t be able to reverse this action.',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {text: 'Delete', onPress: () => this.deleteAccount() },
+      ],
+      {cancelable: false},
+    );
+  } 
 
   render() {
     return (
@@ -64,7 +86,7 @@ export default class Settings extends Component {
           <ListItem last>
             <TouchableOpacity
               style={styles.touchableButton}
-              onPress={console.log("hdsuaj")}
+              onPress={this.showDeleteAlert}
             >
               <Text>Delete account </Text>
             </TouchableOpacity>

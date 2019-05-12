@@ -142,6 +142,18 @@ class AppUser {
           console.log("ERROR GETTING USER")
         }
     };
+
+    @action
+    deleteAccount = async () => {
+        try {
+            this.name = '';
+			this.email = '';
+            this.id = '';
+            this._clearUser();
+        } catch (error) {
+          console.log("ERROR DELETING USER")
+        }
+    };
     
 
 }
