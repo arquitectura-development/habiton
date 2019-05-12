@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import {
   StyleSheet,
-  View
+  View,
+  FlatList,
+  ActivityIndicator
 } from 'react-native'
 import { 
     Container, 
@@ -15,12 +17,68 @@ import {
     ListItem
 } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
-import { MAIN_THEME_COLOR } from '../constants';
+import { MAIN_THEME_COLOR, DEFAULT_GRAY } from '../constants';
 import { VictoryBar, VictoryChart } from "victory-native";
 import AppUser from "../models/AppUser";
+import ReportStore from "../models/ReportStore";
+
+class UserReportItem extends Component {
+  constructor(props) {
+      super(props);
+    }
+
+  render() {
+      return (
+        <ListItem>
+          <Text style={styles.listItemLeft}>{this.props.title}</Text>
+        </ListItem>
+      );
+  }
+}
 
 class UsersReport extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { 
+      isLoading: true
+    };
+  }
+
+  async componentDidMount() {
+    try {
+      await ReportStore.getUserReport(AppUser.id);
+      this.setState({
+        isLoading : false
+      })
+    } catch (err) {
+      console.log('Error: ', err)
+    }
+  }
+
+  renderList = (list, emptyMessage) => {
+    if(list.length){
+      return(
+        <FlatList 
+            data={list}
+            renderItem={({item}) => <UserReportItem title={item.name || item.title}/>}
+            keyExtractor={item => item.id.toString()}
+        />
+      )
+    }else {
+      return(
+        <Text style={styles.emptyListText}>{ emptyMessage }</Text>
+      )
+    }
+  }
+ 
   render() {
+    if(this.state.isLoading){
+      return(
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={MAIN_THEME_COLOR} />
+        </View>
+      )
+    }else{
       return (
         <Container>
           <Content padder>
@@ -28,34 +86,24 @@ class UsersReport extends Component {
               <ListItem itemHeader>
                 <Text style={styles.textHeaderLeft}>TASKS DUE TODAY</Text>
               </ListItem>
-              <ListItem>
-                <Text style={styles.listItemLeft}>TDD task</Text>
-              </ListItem>
-              <ListItem>
-                <Text style={styles.listItemLeft}>Refactor</Text>
-              </ListItem>
+              {this.renderList(ReportStore.userReport.todayTasks, "No tasks for today ")}
               <ListItem itemHeader >
                 <Text style={styles.textHeaderLeft}>DELAYED TASKS</Text>
               </ListItem>
-              <ListItem>
-                <Text style={styles.listItemLeft}>Architecture quiz</Text>
-              </ListItem>
+              {this.renderList(ReportStore.userReport.delayedTasks, "No delayed tasks ")}
               <ListItem itemHeader>
                 <Text style={styles.textHeaderLeft}>GOOD HABITS</Text>
               </ListItem>
-              <ListItem>
-                <Text style={styles.listItemLeft}>Write clean code</Text>
-              </ListItem>
+              {this.renderList(ReportStore.userReport.goodHabits, "No good habits ")}
               <ListItem itemHeader>
                 <Text style={styles.textHeaderLeft}>BAD HABITS</Text>
               </ListItem>
-              <ListItem>
-                <Text style={styles.listItemLeft}>Write magic numbers</Text>
-              </ListItem>
+              {this.renderList(ReportStore.userReport.badHabits, "No bad habits ")}
             </List>
           </Content>
         </Container>
       );
+    }
   }
 }
 
@@ -214,9 +262,13 @@ export default class Reports extends Component {
 
   async componentDidMount() {
     try {
-      // await this.retrieveData();
-      console.log(AppUser)
-      console.log(AppUser.getUser())
+      if(AppUser.isAdmin){
+        console.log("ADMIN")
+      }else{
+        await ReportStore.getUserReport(AppUser.id);
+        console.log("REPORTS USER")
+        console.log(ReportStore.userReport)
+      }
     } catch (err) {
       console.log('Error: ', err)
     }
@@ -253,6 +305,7 @@ export default class Reports extends Component {
       return (
         <Container style={styles.container}>
           <View/> 
+          {}
           <UsersReport/>
         </Container>
       )
@@ -313,5 +366,17 @@ const styles = StyleSheet.create({
     textAlign:'left', 
     alignSelf: 'stretch', 
     marginLeft: 10 
+  },
+  emptyListText:{
+    backgroundColor:  '#F4F4F4',
+    padding: 10,
+    paddingLeft: 15
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 10
   }
 })
