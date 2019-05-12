@@ -10,8 +10,10 @@ import {
   Alert,
   ActivityIndicator
 } from "react-native";
+import { Item, Input, Label } from 'native-base';
 import { goHome } from '../navigation';
 import AppUser from "../models/AppUser";
+import { MAIN_THEME_COLOR } from '../constants';
 
 export default class Login extends Component {
     constructor(props) {
@@ -70,16 +72,18 @@ export default class Login extends Component {
                     resizeMode="contain"
                     style={styles.logo}
                 />
-                <TextInput
-                    keyboardType="email-address"
-                    placeholder="Email"
-                    textContentType="emailAddress"
-                    style={styles.textInput}
-                    onChangeText={(email) => this.setEmail(email)}
-                    value={ email }
-                    autoCapitalize="none"
-                    placeholderTextColor="white"
-                />
+                <Item floatingLabel style={styles.inputContainer}>
+                    <Label style={styles.inputLabel}>Email</Label>
+                    <Input
+                        keyboardType="email-address"
+                        textContentType="emailAddress"
+                        style={styles.textInput}
+                        onChangeText={(email) => this.setEmail(email)}
+                        value={ email }
+                        autoCapitalize="none"
+                        placeholderTextColor="white"
+                     />
+                </Item>
                 <TouchableOpacity
                     activeOpacity={ .9 } 
                     disabled = { !enableButton }
@@ -90,6 +94,9 @@ export default class Login extends Component {
                         { this.showLoader() }
                     </View>
     
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.signupButton}>
+                    <Text style={styles.signupText}>Sign Up</Text>
                 </TouchableOpacity>
             </View>
       </KeyboardAvoidingView>
@@ -108,7 +115,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "flex-start",
         alignItems: 'center',
-        backgroundColor: "#490073",
+        backgroundColor: MAIN_THEME_COLOR,
         padding: 35
       },
     buttonContent: {
@@ -121,35 +128,51 @@ const styles = StyleSheet.create({
     },
     button: {
         backgroundColor: "#ffffff",
-        borderRadius: 20,
-        height: 40,
+        borderRadius: 5,
+        height: 45,
         alignItems: "center",
         justifyContent: "center",
         marginTop: 15
     },
     disabledButton: {
         backgroundColor: "#ffffff",
-        borderRadius: 20,
-        height: 40,
+        borderRadius: 5,
+        height: 45,
         alignItems: "center",
         justifyContent: "center",
         marginTop: 15,
         opacity: 0.3
     },
     buttonText: {
-        fontSize: 16,
+        fontSize: 17,
         color: "#303030"
     },
     textInput: {
-        paddingHorizontal: 10,
-        borderColor: 'red',
-        height: 40,
         color: "#ffffff",
-        marginBottom: 30     
+        fontSize: 14
     },
     logo: {
         marginBottom: 40,
         marginTop: 50,
         maxWidth: '100%'
+    },
+    signupButton: {
+        padding: 10,
+        marginTop: 10,
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    signupText: {
+        color: 'white',
+        fontSize: 14,
+        fontWeight: '600'
+    },
+    inputContainer: {
+        marginBottom: 30 
+    },
+    inputLabel: {
+        color: 'white',
+        fontSize: 14,
+        fontWeight: '500'
     }
 });
