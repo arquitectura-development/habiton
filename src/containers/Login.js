@@ -27,16 +27,19 @@ export default class Login extends Component {
     login = async() => {
         const { email } = this.state;
         this.setState({isLoading: true});
-        goHome();
         AppUser.logon(email).then(res =>{
             goHome();
             this.setState({isLoading: false});
         }).catch(e => {
             let title = "Error";
-            let subtitle = "Ocurrió un problema, intenta más tarde.";
-            if(e.statusCode == 401){
-                title="Error de autenticación";
-                subtitle="Usuario o contraseña incorrecta.";
+            let subtitle = "There was a problem, try again later.";
+            if(e.response.status == 401){
+                title="Authentication error";
+                subtitle="Incorrect email.";
+            }
+            if(e.response.status == 404){
+                title="Account not found";
+                subtitle="There is no account for this email.";
             }
             Alert.alert(title, subtitle);
             this.setState({isLoading: false});

@@ -24,10 +24,11 @@ class AppUser {
                 this.email = data.email;
                 this.id = data.id;
                 this.isAdmin = false;
-                this._persistUser();
+                await this._persistUser();
                 resolve(this);
             }
             catch(e) {
+               
                 reject(e);
             }
         })
@@ -35,21 +36,21 @@ class AppUser {
 
     @action
     logon(email) {
-        console.log("LOGIN")
         return new Promise(async (resolve, reject) => {
             try {
                 let { data } = await api.post(`/users/login`, {
                     email: email
                 });
-                console.log(data)
                 this.name = data.name;
                 this.email = data.email;
                 this.id = data.id;
                 this.isAdmin = (data.id == 0);
-                this._persistUser();
+                await this._persistUser();
                 resolve(this);
             }
             catch(e) {
+                console.log("ERROR LOGIN")
+                console.log(e)
                 reject(e);
             }
         })
