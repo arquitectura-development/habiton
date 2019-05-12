@@ -1,6 +1,6 @@
 import { observable, action } from "mobx";
 import { AsyncStorage } from 'react-native';
-import { API_URL } from './../constants';
+import { api } from "../api";
 
 class AppUser {
   @observable
@@ -14,72 +14,46 @@ class AppUser {
         
     @action
     signup(email, name) {
-            return new Promise(async (resolve, reject) => {
-                this.name = name;
-                this.email = email;
-                this.id = 2;
-                this.isAdmin = (email == "admin@admin.com");
+        return new Promise(async (resolve, reject) => {
+            try {
+                let { data } = await api.post(`/users/signup`, {
+                    email: email,
+                    name: name
+                });
+                this.name = data.name;
+                this.email = data.email;
+                this.id = data.id;
+                this.isAdmin = false;
                 this._persistUser();
                 resolve(this);
-                //sAsyncStorage.setItem('USER', JSON.stringify(this));
-                // AppUsers.generic(
-                // 	{
-                // 		method: 'POST',
-                // 		endPoint: 'appAuthentication'
-                // 	},
-                // 	{
-                // 		email: email,
-                // 		password: password
-                // 	}
-                // ).then(data => {
-                // 		console.log(data)
-                // 		this.name = data.name;
-                // 		this.email = data.email;
-                // 		this.userId = data.userId;
-                // 		this.addikaAccount = data.addikaAccount;
-                // 		this.token = data.id;
-                // 		AppUsers.setToken(this.token);
-                // 		resolve(data);
-                // 	})
-                // 	.catch(e => {
-                // 		reject(e);
-                // 	})
-            })
-        }
+            }
+            catch(e) {
+                reject(e);
+            }
+        })
+    }
 
     @action
-	logon(email) {
-		return new Promise(async (resolve, reject) => {
-			this.name = (email == "admin@admin.com") ? 'Admin' : 'Meeper';
-			this.email = email;
-            this.id = 1;
-            this.isAdmin = (email == "admin@admin.com");
-            this._persistUser();
-            //sAsyncStorage.setItem('USER', JSON.stringify(this));
-			// AppUsers.generic(
-			// 	{
-			// 		method: 'POST',
-			// 		endPoint: 'appAuthentication'
-			// 	},
-			// 	{
-			// 		email: email,
-			// 		password: password
-			// 	}
-			// ).then(data => {
-			// 		console.log(data)
-			// 		this.name = data.name;
-			// 		this.email = data.email;
-			// 		this.userId = data.userId;
-			// 		this.addikaAccount = data.addikaAccount;
-			// 		this.token = data.id;
-			// 		AppUsers.setToken(this.token);
-			// 		resolve(data);
-			// 	})
-			// 	.catch(e => {
-			// 		reject(e);
-			// 	})
-		})
-	}
+    logon(email) {
+        console.log("LOGIN")
+        return new Promise(async (resolve, reject) => {
+            try {
+                let { data } = await api.post(`/users/login`, {
+                    email: email
+                });
+                console.log(data)
+                this.name = data.name;
+                this.email = data.email;
+                this.id = data.id;
+                this.isAdmin = (data.id == 0);
+                this._persistUser();
+                resolve(this);
+            }
+            catch(e) {
+                reject(e);
+            }
+        })
+    }
 
 	@action
 	logout() {
@@ -88,19 +62,6 @@ class AppUser {
 			this.email = '';
             this.id = '';
             this._clearUser();
-			// AppUsers.logout().then(data => {
-			// 		console.log(data)
-			// 		this.name = '';
-			// 		this.email = '';
-			// 		this.userId = '';
-			// 		this.addikaAccount = null;
-			// 		this.token = '';
-			// 		AppUsers.setToken('');
-			// 		resolve(data);
-			// 	})
-			// 	.catch(e => {
-			// 		reject(e);
-			// 	})
 		})
     }
 

@@ -9,6 +9,7 @@
     "build:android": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "mobx": "^5.9.4",
     "mobx-react": "^5.4.3",
     "native-base": "^2.12.1",
