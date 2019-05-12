@@ -43,7 +43,6 @@ export default class Login extends Component {
     }
 
     setEmail = (email) => {
-        const { password } = this.state;
         this.setState({
             email: email,
             enableButton: email != ''

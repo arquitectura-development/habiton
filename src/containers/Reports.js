@@ -12,22 +12,12 @@ import {
     Icon, 
     Text, 
     List,
-    ListItem,
-    Card, 
-    CardItem, 
-    Body,
-    Left,
-    Right,
-    Switch,
-    Button ,
-    Thumbnail
+    ListItem
 } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import { MAIN_THEME_COLOR } from '../constants';
 import { VictoryBar, VictoryChart } from "victory-native";
-
-const USER = "jadmin@admin.com";
-const ISADMIN = (USER === "admin@admin.com") ? true : false;
+import AppUser from "../models/AppUser";
 
 class UsersReport extends Component {
   render() {
@@ -202,7 +192,7 @@ export default class Reports extends Component {
     return {
       topBar: {
         title: {
-          text: ISADMIN ? 'Reports' : 'Report'
+          text: AppUser.isAdmin ? 'Reports' : 'Report'
         },
         largeTitle: {
           visible: true,
@@ -215,8 +205,25 @@ export default class Reports extends Component {
     };
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      report: []
+    }
+  }
+
+  async componentDidMount() {
+    try {
+      // await this.retrieveData();
+      console.log(AppUser)
+      console.log(AppUser.getUser())
+    } catch (err) {
+      console.log('Error: ', err)
+    }
+  }
+
   render() {
-    if(ISADMIN){
+    if(AppUser.isAdmin){
       return (
           <Container style={styles.container}>
             <Tabs 
