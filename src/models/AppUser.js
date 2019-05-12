@@ -128,12 +128,15 @@ class AppUser {
             }
             else{
                 let user = await AsyncStorage.getItem('USER');
-                user = JSON.parse(user);
-                this.name = (user.email == "admin@admin.com") ? 'Admin' : 'Meeper';
-			    this.email = user.email;
-                this.id = user.id;
-                this.isAdmin = (user.email == "admin@admin.com");
-                return this;
+                if (user !== null) {
+                    user = JSON.parse(user);
+                    this.name = user.name;
+                    this.email = user.email;
+                    this.id = user.id;
+                    this.isAdmin = (user.email == "admin@admin.com");
+                    return this;
+                }
+                else return user;
             }
         } catch (error) {
           console.log("ERROR GETTING USER")
