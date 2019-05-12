@@ -9,6 +9,7 @@ import Habits from './containers/Habits';
 import HabitForm from './containers/HabitForm';
 import Tasks from './containers/Tasks';
 import TaskForm from './containers/TaskForm';
+import Signup from './containers/Signup';
 
 export function registerScreens() {
   Navigation.registerComponent('Home', () => Home);
@@ -19,4 +20,5 @@ export function registerScreens() {
   Navigation.registerComponent('Tasks', () => Tasks);
   Navigation.registerComponent('TaskForm', () => TaskForm);
   Navigation.registerComponent('HabitForm', () => HabitForm);
+  Navigation.registerComponent('Signup', () => Signup);
 }

@@ -115,3 +115,14 @@ export const goLogin = () => {
     },
   });
 }
+
+
+export const goSignup = () => {
+  Navigation.setRoot({
+    root: {
+      component: {
+        name: 'Signup'
+      }
+    },
+  });
+}

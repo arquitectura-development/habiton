@@ -10,25 +10,25 @@ import {
   ActivityIndicator
 } from "react-native";
 import { Item, Input, Label } from 'native-base';
-import { goHome, goSignup } from '../navigation';
+import { goHome, goLogin } from '../navigation';
 import AppUser from "../models/AppUser";
 import { MAIN_THEME_COLOR } from '../constants';
 
-export default class Login extends Component {
+export default class Signup extends Component {
     constructor(props) {
         super(props);
         this.state = { 
             email: '',
+            name: '',
             enableButton: false,
             isLoading: false
         };
       }
 
-    login = async() => {
-        const { email } = this.state;
+    signup = async() => {
+        const { email, name } = this.state;
         this.setState({isLoading: true});
-        goHome();
-        AppUser.logon(email).then(res =>{
+        AppUser.signup(email, name).then(res =>{
             goHome();
             this.setState({isLoading: false});
         }).catch(e => {
@@ -43,10 +43,20 @@ export default class Login extends Component {
         })
     }
 
+
+    setName = (name) => {
+        const { email } = this.state;
+        this.setState({
+            name: name,
+            enableButton: name && email
+        })
+    }
+
     setEmail = (email) => {
+        const { name } = this.state;
         this.setState({
             email: email,
-            enableButton: email != ''
+            enableButton: name && email
         })
     }
 
@@ -57,12 +67,12 @@ export default class Login extends Component {
                 <ActivityIndicator size="small" color="#8e06ab" />
             );
         }else{
-            return <Text style={ styles.buttonText}>Login</Text>;
+            return <Text style={ styles.buttonText}>Signup</Text>;
         }
     }
   
   render() {
-    const { email, enableButton } = this.state;
+    const { email, name, enableButton } = this.state;
     return (
         <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
             <View style={styles.inputsContainer}>
@@ -83,10 +93,21 @@ export default class Login extends Component {
                         placeholderTextColor="white"
                      />
                 </Item>
+                <Item floatingLabel style={styles.inputContainer}>
+                    <Label style={styles.inputLabel}>Name</Label>
+                    <Input
+                        textContentType="name"
+                        style={styles.textInput}
+                        onChangeText={(name) => this.setName(name)}
+                        value={ name }
+                        autoCapitalize="words"
+                        placeholderTextColor="white"
+                     />
+                </Item>
                 <TouchableOpacity
                     activeOpacity={ .9 } 
                     disabled = { !enableButton }
-                    onPress={async () => { this.login(); }}
+                    onPress={async () => { this.signup(); }}
                     style={ enableButton ? styles.button : styles.disabledButton}
                 >
                     <View style={ styles.buttonContent }>
@@ -96,9 +117,9 @@ export default class Login extends Component {
                 </TouchableOpacity>
                 <TouchableOpacity 
                     style={styles.signupButton}
-                    onPress={() => { goSignup(); }}
+                    onPress={() => { goLogin(); }}
                     >
-                    <Text style={styles.signupText}>Sign Up</Text>
+                    <Text style={styles.signupText}>I have an account</Text>
                 </TouchableOpacity>
             </View>
       </KeyboardAvoidingView>
@@ -154,7 +175,6 @@ const styles = StyleSheet.create({
         fontSize: 14
     },
     logo: {
-        marginBottom: 40,
         marginTop: 50,
         maxWidth: '100%'
     },

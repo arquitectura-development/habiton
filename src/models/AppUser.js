@@ -10,9 +10,44 @@ class AppUser {
 		email = "";
 	
 	@observable
-		id = "";
+        id = "";
+        
+    @action
+    signup(email, name) {
+            return new Promise(async (resolve, reject) => {
+                this.name = name;
+                this.email = email;
+                this.id = 2;
+                this.isAdmin = (email == "admin@admin.com");
+                this._persistUser();
+                resolve(this);
+                //sAsyncStorage.setItem('USER', JSON.stringify(this));
+                // AppUsers.generic(
+                // 	{
+                // 		method: 'POST',
+                // 		endPoint: 'appAuthentication'
+                // 	},
+                // 	{
+                // 		email: email,
+                // 		password: password
+                // 	}
+                // ).then(data => {
+                // 		console.log(data)
+                // 		this.name = data.name;
+                // 		this.email = data.email;
+                // 		this.userId = data.userId;
+                // 		this.addikaAccount = data.addikaAccount;
+                // 		this.token = data.id;
+                // 		AppUsers.setToken(this.token);
+                // 		resolve(data);
+                // 	})
+                // 	.catch(e => {
+                // 		reject(e);
+                // 	})
+            })
+        }
 
-  @action
+    @action
 	logon(email) {
 		return new Promise(async (resolve, reject) => {
 			this.name = (email == "admin@admin.com") ? 'Admin' : 'Meeper';
@@ -68,14 +103,6 @@ class AppUser {
 			// 	})
 		})
     }
-
-    _persistUser = async () => {
-        try {
-          await AsyncStorage.setItem('USER', JSON.stringify(this));
-        } catch (error) {
-          console.log("ERROR SAVING USER")
-        }
-    };
 
     _persistUser = async () => {
         try {
