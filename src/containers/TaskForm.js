@@ -18,8 +18,8 @@ import {
   ListItem
  } from 'native-base';
 import { Navigation } from 'react-native-navigation';
-import { AsyncStorage } from "react-native";
 import { MAIN_THEME_COLOR } from '../constants';
+import moment from 'moment';
 
 
 export default class TaskForm extends Component {
@@ -124,23 +124,14 @@ export default class TaskForm extends Component {
     }
   }
 
-  retrieveData = async () => {
-  try {
-    const value = await AsyncStorage.getItem('USER');
-    if (value !== null) {
-      let user = JSON.parse(value);
-      this.setState({
-        'user': user
-      })
-    }
-   } catch (error) {
-     console.log(error);
-   }
-}
-
 async componentDidMount() {
   try {
-    await this.retrieveData();
+    // const { dueDate, reminder } = this.props.task;
+    // if(dueDate && reminder){
+    //   this.setState({
+    //     dueDate: new Date
+    //   })
+    // }
   } catch (err) {
     console.log('Error: ', err)
   }

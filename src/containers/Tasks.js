@@ -5,29 +5,17 @@ import {
   ScrollView,
   Platform,
   FlatList,
-  TouchableOpacity
+  TouchableOpacity,
+  ActivityIndicator
 } from 'react-native'
 import { Text, Icon, CheckBox } from 'native-base';
 import { MAIN_THEME_COLOR } from '../constants';
 import { Navigation } from 'react-native-navigation';
+import AppUser from "../models/AppUser";
+import TaskStore from "../models/TaskStore";
+import moment from 'moment';
 
-let tasks = [
-    {
-        id: 1,
-        title: 'Complete final project',
-        description: 'Smart cities',
-        done: false,
-        dueDate: new Date(),
-        reminder: new Date()
-    },
-    {
-        id: 2,
-        title: 'Finish homework',
-        description: 'Task 4 - Cyber security',
-        done: true,
-        dueDate: new Date("7/05/2019")
-    }
-]
+moment.locale("es");
 
 class TaskItem extends Component {
     constructor(props) {
@@ -54,7 +42,7 @@ class TaskItem extends Component {
 
     renderDueDate = () => {
         const { dueDate } = this.state.task;
-        if(dueDate){
+        if(moment().isSame(moment(dueDate,'DD/MM/YYYY'), 'day')){
             return ( 
                 <View style={styles.dueDateContainer} >
                     <Icon name='calendar' style={{...styles.calendarIcon, ...{color: '#cc0000'}}}/>
@@ -62,10 +50,12 @@ class TaskItem extends Component {
                 </View>
             )
         }else{
-            <View style={styles.dueDateContainer} >
+            return(
+                <View style={styles.dueDateContainer} >
                         <Icon name='calendar' style={styles.calendarIcon}/>
-                        <Text style={styles.dueDateText}>{"10/05/29"}</Text>
-             </View>
+                        <Text style={styles.dueDateText}>{moment(dueDate,'DD/MM/YYYY').format('DD/MM/YYYY')}</Text>
+                </View>
+            )
         }
     }
 
@@ -146,8 +136,22 @@ export default class Tasks extends Component {
     super(props);
     Navigation.events().bindComponent(this);
     this.state = { 
-        tasks : tasks
+        isLoading: true
     };
+  }
+
+  async componentDidMount() {
+    try {
+      await TaskStore.getTasks(AppUser.id);
+      this.setState({
+        isLoading : false
+      })
+    } catch (err) {
+      console.log('Error: ', err)
+      this.setState({
+        isLoading : false
+      })
+    }
   }
 
 
@@ -167,16 +171,23 @@ export default class Tasks extends Component {
 
 
   render() {
-
-    return (
-        <ScrollView style={styles.contentContainer}>
-            <FlatList 
-                data={tasks}
-                renderItem={({item}) => <TaskItem task={item}/>}
-                keyExtractor={item => item.id.toString()}
-            />
-        </ScrollView>
-    )
+    if(this.state.isLoading){
+        return(
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={MAIN_THEME_COLOR} />
+          </View>
+        )
+    }else{
+        return (
+            <ScrollView style={styles.contentContainer}>
+                <FlatList 
+                    data={TaskStore.tasks}
+                    renderItem={({item}) => <TaskItem task={item}/>}
+                    keyExtractor={item => item.id.toString()}
+                />
+            </ScrollView>
+        )
+    }
   }
 }
 
@@ -249,5 +260,17 @@ const styles = StyleSheet.create({
           fontSize: 18,
           position: 'absolute',
           right: 0
+      },
+      emptyListText:{
+        backgroundColor:  '#F4F4F4',
+        padding: 10,
+        paddingLeft: 15
+      },
+      loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        padding: 10
       }
 })
