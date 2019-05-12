@@ -5,7 +5,6 @@ import {
   ScrollView,
   Platform,
   FlatList,
-  TouchableHighlight,
   TouchableOpacity
 } from 'react-native'
 import { Text, Icon, CheckBox } from 'native-base';
@@ -133,7 +132,7 @@ export default class Tasks extends Component {
         },
         rightButtons: [
             {
-              id: 'addHabitButton',
+              id: 'addTaskButton',
               color: MAIN_THEME_COLOR,
               fontSize: 40,
               ...iconByPlatform
@@ -153,7 +152,7 @@ export default class Tasks extends Component {
 
 
   navigationButtonPressed({ buttonId }) {
-      if(buttonId == 'addHabitButton'){
+      if(buttonId == 'addTaskButton'){
         Navigation.showModal({
             stack: {
               children: [{

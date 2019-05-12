@@ -1,37 +1,27 @@
 import React, { Component } from 'react';
 import {
   View,
-  TextInput,
   StyleSheet,
-  Switch,
-  Text
+  Text,
+  Alert
 } from 'react-native'
 import {
   Container,
   Button,
-  Header,
   Content,
   Form,
   Item,
   Input,
   Label,
-  Picker,
   Icon,
-  Left,
-  Subtitle,
-  Right,
-  Body,
-  Textarea,
-  Title,
-  DatePicker,
+  Picker,
   ListItem,
-  Separator,
-  Footer
+  Header,
+  Left, 
+  Right,
+  Body
  } from 'native-base';
-import { Col, Row, Grid } from 'react-native-easy-grid';
-import { goHome } from '../navigation';
 import { Navigation } from 'react-native-navigation';
-import { AsyncStorage } from "react-native";
 import { MAIN_THEME_COLOR } from '../constants';
 
 
@@ -40,7 +30,7 @@ export default class HabitForm extends Component {
     return {
       topBar: {
         title: {
-          text: 'New task'
+          text: passProps.habit ? 'Edit habit' : 'New habit'
         },
         leftButtons: [
           {
@@ -64,53 +54,85 @@ export default class HabitForm extends Component {
     this.onValueChange = this.onValueChange.bind(this);
     Navigation.events().bindComponent(this);
     this.state = {
-      user: {}
+      habit: this.props.habit? this.props.habit : {}
     };
+  }
+
+  renderDeleteButton = () => {
+    if(this.props.habit){
+      return (
+        <View>
+          <ListItem itemHeader style={styles.divider}/>
+          <Button iconLeft transparent block danger onPress={this.showDeleteAlert}>
+            <Icon name='trash' style={{marginRight: 5}}/>
+            <Text>Delete habit</Text>
+          </Button>
+        </View>
+      )
+    }else{
+      return null;
+    }
   }
 
   onValueChange = (key, val) => {
     this.setState({ [key]: val })
     this.setState(prevState => ({
-        user: {
-            ...prevState.user,
+        habit: {
+            ...prevState.habit,
             [key]: val
         }
     }))
   }
 
-  saveTask = async () => {
+  saveHabit = async () => {
     try {
-      console.log("TASK HDJS");
-      // await AsyncStorage.setItem('USER', JSON.stringify(user));
+      console.log("SAVE HABIT");
     } catch (error) {
       console.log(error);
     }
   }
 
+  deleteHabit = async () => {
+    try {
+      console.log("DELETE HABIT CONFIRMED");
+      Navigation.dismissModal(this.props.componentId);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  showDeleteAlert = () => {
+    Alert.alert(
+      'Delete habit?',
+      'If you continue you won\'t be able to reverse this action.',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {text: 'Delete', onPress: () => this.deleteHabit() },
+      ],
+      {cancelable: false},
+    );
+  } 
+
   navigationButtonPressed({ buttonId }) {
-    Navigation.dismissModal({
-      animationType: 'slide-down'
-    })
+    Navigation.dismissModal(this.props.componentId);
     if(buttonId == "buttonSave"){
-      return this.saveTask();
+      return this.saveHabit();
     }else{
       return;
     }
   }
 
   retrieveData = async () => {
-  try {
-    const value = await AsyncStorage.getItem('USER');
-    if (value !== null) {
-      let user = JSON.parse(value);
-      this.setState({
-        'user': user
-      })
+    try {
+      console.log("mju")
+    } catch (error) {
+      console.log(error);
     }
-   } catch (error) {
-     console.log(error);
-   }
-}
+  }
 
 async componentDidMount() {
   try {
@@ -123,356 +145,92 @@ async componentDidMount() {
   render() {
     const {
       name,
-      birthdate,
-      gender,
-      weight,
-      height,
-      shoeSize,
-      laterality,
-      glucose,
-      amputationReason,
-      amputationType,
-      amputationSide,
-      prevDisplacementTool,
-      prevRehabilitation
-    } = this.state.user;
-    return (
-      <Container>
+      type,
+      difficulty
+    } = this.state.habit;
+    return(
+      <Container style={{backgroundColor:'#F8F8F8'}}>
         <Content>
-          <Form>
+          <Form style={{backgroundColor:'white'}}>
             <ListItem itemHeader style={styles.divider}>
               <Text style={styles.dividerText}>GENERAL</Text>
             </ListItem>
-            <Item picker>
-              <Picker
-                mode="dropdown"
-                iosIcon={<Icon name="arrow-down" />}
-                style={{ width: undefined }}
-                placeholder="Select your SIM"
-                placeholderStyle={{ color: "#bfc6ea" }}
-                placeholderIconColor="#007aff"
-                selectedValue={name}
-                onValueChange={(name) => this.onValueChange('name', name)}
-              >
-                <Picker.Item label="Wallet" value="key0" />
-                <Picker.Item label="ATM Card" value="key1" />
-                <Picker.Item label="Debit Card" value="key2" />
-                <Picker.Item label="Credit Card" value="key3" />
-                <Picker.Item label="Net Banking" value="key4" />
-              </Picker>
+            <Item stackedLabel last>
+              <Label style={styles.label}>Name*</Label>
+              <Input 
+                style={styles.inputText}
+                placeholder="Ej. Do clean code" 
+                onChangeText={val => this.onValueChange('name', val)}
+                value={ name }
+                />
             </Item>
-            <ListItem floatingLabel>
-              <Label>Username</Label>
-              <Input />
-            </ListItem>
-            <ListItem >
-            <Left>
-            <Text>Airplane Mode</Text>
-            </Left>
-            {/* <Body>
-              <Text>Airplane Mode</Text>
-            </Body> */}
-            <Right>
-              <Switch value={false} />
-            </Right>
-          </ListItem>
-            <ListItem >
-              <Grid>
-                <Row>
-                  <Text
-                  style={styles.label}
-                  >Title *</Text>
-                </Row>
-                <Row>
-                  <Input
-                    autoCapitalize="words"
-                    textContentType="name"
-                    onChangeText={(name) => this.onValueChange('name', name)}
-                    value={ name }
-                   />
-                </Row>
-              </Grid>
-            </ListItem>
-            <Item style={styles.itemList}>
-              <Grid>
-                <Row>
-                  <Text style={styles.label}>Fecha de nacimiento</Text>
-                </Row>
-                <Row>
-                  <DatePicker
-                    defaultDate={new Date()}
-                    minimumDate={new Date(1900, 1, 1)}
-                    maximumDate={new Date()}
-                    locale={"es"}
-                    timeZoneOffsetInMinutes={undefined}
-                    modalTransparent={false}
-                    animationType={"fade"}
-                    androidMode={"default"}
-                    placeHolderText="Selecciona una fecha"
-                    textStyle={{ color: "black" }}
-                    placeHolderTextStyle={{ color: "#d3d3d3" }}
-                    onDateChange={val => this.onValueChange('birthdate', val)}
-                    />
-                </Row>
-              </Grid>
-            </Item>
-            <ListItem >
-              <Grid>
-                <Row>
-                  <Text style={styles.label}>Género</Text>
-                </Row>
-                <Row>
-                  <Picker
-                    mode="dropdown"
-                    renderHeader={backAction =>
-                    <Header>
-                      <Left>
-                        <Button transparent onPress={backAction}>
-                          <Icon name="arrow-back" style={{ color: "#00b3ae" }} />
-                        </Button>
-                      </Left>
-                      <Body style={{ flex: 3 }}>
-                        <Text style={{ fontSize: 16 }}>Selecciona tu género</Text>
-                      </Body>
-                      <Right />
-                    </Header>}
-                    placeholder="Selecciona tu género"
-                    placeholderStyle={{ color: "#d3d3d3" }}
-                    placeholderIconColor="#007aff"
-                    selectedValue={ gender }
-                    onValueChange={val => this.onValueChange('gender',val)}
-                  >
-                    <Picker.Item label="Femenino" value="Femenino" />
-                    <Picker.Item label="Masculino" value="Masculino" />
-                    <Picker.Item label="Otro" value="Otro" />
-                  </Picker>
-                </Row>
-              </Grid>
-            </ListItem>
-            <ListItem >
-              <Grid>
-                <Row>
-                  <Text style={styles.label}>Peso (kg)</Text>
-                </Row>
-                <Row>
-                  <Input
-                    keyboardType="numeric"
-                    onChangeText={(weight) => this.onValueChange('weight', weight)}
-                    value={ weight }
-                  />
-                </Row>
-              </Grid>
-            </ListItem>
-            <ListItem >
-              <Grid>
-                <Row>
-                  <Text style={styles.label}>Estatura (cm)</Text>
-                </Row>
-                <Row>
-                  <Input
-                    keyboardType="numeric"
-                    onChangeText={(height) => this.onValueChange('height', height)}
-                    value={ height }
-                  />
-                </Row>
-              </Grid>
-            </ListItem>
-            <ListItem >
-              <Grid>
-                <Row>
-                  <Text style={styles.label}>Talla de calzado (cm)</Text>
-                </Row>
-                <Row>
-                  <Input
-                    keyboardType="numeric"
-                    onChangeText={(shoeSize) => this.onValueChange('shoeSize', shoeSize)}
-                    value={ shoeSize }
-                  />
-                </Row>
-              </Grid>
-            </ListItem>
-            <ListItem noIndent>
-              <Grid>
-                <Row>
-                  <Text style={styles.label}>Lateralidad</Text>
-                </Row>
-                <Row>
-                  <Picker
-                    mode="dropdown"
-                    renderHeader={backAction =>
-                    <Header>
-                      <Left>
-                        <Button transparent onPress={backAction}>
-                          <Icon name="arrow-back" style={{ color: "#00b3ae" }} />
-                        </Button>
-                      </Left>
-                      <Body style={{ flex: 3 }}>
-                        <Text style={{ fontSize: 16 }}>Selecciona</Text>
-                      </Body>
-                      <Right />
-                    </Header>}
-                    placeholder="Selecciona"
-                    placeholderStyle={{ color: "#d3d3d3" }}
-                    placeholderIconColor="#007aff"
-                    selectedValue={ laterality }
-                    onValueChange={val => this.onValueChange('laterality',val)}
-                  >
-                    <Picker.Item label="Zurdo" value="Zurdo" />
-                    <Picker.Item label="Diestro" value="Diestro" />
-                  </Picker>
-                </Row>
-              </Grid>
-            </ListItem>
-
             <ListItem itemHeader style={styles.divider}>
-              <Text style={styles.dividerText}>DETALLES</Text>
+              <Text style={styles.dividerText}>TYPE</Text>
             </ListItem>
-            <ListItem >
-              <Grid>
-                <Row>
-                  <Text style={styles.label}>Causa de amputación</Text>
-                </Row>
-                <Row>
-                  <Textarea
-                    style={styles.textarea}
-                    rowSpan={2}
-                    onChangeText={(amputationReason) => this.onValueChange('amputationReason', amputationReason)}
-                    value={ amputationReason }
-                    />
-                </Row>
-              </Grid>
-            </ListItem>
-            <ListItem picker style={styles.itemPicker}>
-              <Grid>
-                <Row>
-                  <Text style={styles.label}>Tipo de amputación</Text>
-                </Row>
-                <Row>
-                  <Picker
+            <Item style={styles.itemList} last>
+              <Picker
                     mode="dropdown"
                     renderHeader={backAction =>
                     <Header>
                       <Left>
                         <Button transparent onPress={backAction}>
-                          <Icon name="arrow-back" style={{ color: "#00b3ae" }} />
+                          <Icon name="arrow-back" style={{ color: MAIN_THEME_COLOR }} />
                         </Button>
                       </Left>
                       <Body style={{ flex: 3 }}>
-                        <Text style={{ fontSize: 16 }}>Tipo de amputación</Text>
+                        <Text style={{ fontSize: 16 }}>Select type</Text>
                       </Body>
                       <Right />
                     </Header>}
-                    style={{ width: '100%' }}
-                    placeholder="Selecciona"
+                    placeholder="Select"
                     placeholderStyle={{ color: "#d3d3d3" }}
                     placeholderIconColor="#007aff"
-                    selectedValue={amputationType}
-                    onValueChange={val => this.onValueChange('amputationType',val)}
+                    selectedValue={ type }
+                    onValueChange={val => this.onValueChange('type',val)}
                   >
-                    <Picker.Item label="Transfemoral" value="Transfemoral" />
-                    <Picker.Item label="Transtibial" value="Transtibial" />
+                    <Picker.Item label="Positive" value="Positive"/>
+                    <Picker.Item label="Negative" value="Negative" />
+                    <Picker.Item label="Both" value="Both" />
                   </Picker>
-                </Row>
-              </Grid>
+            </Item>
+            <ListItem itemHeader style={styles.divider}>
+              <Text style={styles.dividerText}>DIFFICULTY</Text>
             </ListItem>
-            <ListItem picker style={styles.itemPicker}>
-              <Grid>
-                <Row>
-                  <Text style={styles.label}>Lado de la amputación</Text>
-                </Row>
-                <Row>
-                  <Picker
+            <Item style={styles.itemList} last>
+              <Picker
                     mode="dropdown"
                     renderHeader={backAction =>
                     <Header>
                       <Left>
                         <Button transparent onPress={backAction}>
-                          <Icon name="arrow-back" style={{ color: "#00b3ae" }} />
+                          <Icon name="arrow-back" style={{ color: MAIN_THEME_COLOR }} />
                         </Button>
                       </Left>
                       <Body style={{ flex: 3 }}>
-                        <Text style={{ fontSize: 16 }}>Lado de la amputación</Text>
+                        <Text style={{ fontSize: 16 }}>Select difficulty</Text>
                       </Body>
                       <Right />
                     </Header>}
-                    style={{ width: '100%' }}
-                    placeholder="Selecciona"
+                    placeholder="Select"
                     placeholderStyle={{ color: "#d3d3d3" }}
                     placeholderIconColor="#007aff"
-                    selectedValue={amputationSide}
-                    onValueChange={val => this.onValueChange('amputationSide',val)}
+                    selectedValue={ difficulty }
+                    onValueChange={val => this.onValueChange('difficulty',val)}
                   >
-                    <Picker.Item label="Izquierdo" value="Izquierdo" />
-                    <Picker.Item label="Derecho" value="Derecho" />
+                    <Picker.Item label="Medium" value="Medium"/>
+                    <Picker.Item label="Hard" value="Hard" />
+                    <Picker.Item label="Easy" value="Easy" />
                   </Picker>
-                </Row>
-              </Grid>
-            </ListItem>
-            <ListItem picker style={styles.itemPicker}>
-              <Grid>
-                <Row>
-                  <Text style={styles.label}>
-                    Antes de recibir la prótesis me desplazaba con
-                  </Text>
-                </Row>
-                <Row>
-                  <Picker
-                    mode="dropdown"
-                    renderHeader={backAction =>
-                    <Header>
-                      <Left>
-                        <Button transparent onPress={backAction}>
-                          <Icon name="arrow-back" style={{ color: "#00b3ae" }} />
-                        </Button>
-                      </Left>
-                      <Body style={{ flex: 3 }}>
-                        <Text style={{ fontSize: 16 }}>
-                          Me desplazaba con
-                        </Text>
-                      </Body>
-                      <Right />
-                    </Header>}
-                    style={{ width: '100%' }}
-                    placeholder="Selecciona"
-                    placeholderStyle={{ color: "#d3d3d3" }}
-                    placeholderIconColor="#007aff"
-                    selectedValue={prevDisplacementTool}
-                    onValueChange={val => this.onValueChange('prevDisplacementTool',val)}
-                  >
-                    <Picker.Item label="Silla de ruedas" value="Silla de ruedas" />
-                    <Picker.Item label="Andadera" value="Andadera" />
-                    <Picker.Item label="Muleta" value="Muleta" />
-                  </Picker>
-                </Row>
-              </Grid>
-            </ListItem>
-
-            <ListItem noIndent>
-              <Body>
-                <Text style={styles.label}>Previamente he tomado rehabilitación</Text>
-              </Body>
-              <Switch
-                onValueChange={ value => this.onValueChange('prevRehabilitation', value)}
-                value={ prevRehabilitation }
-                trackColor= "#00b3ae"
-              />
-            </ListItem>
+            </Item>
+            { this.renderDeleteButton() }
           </Form>
-          <Footer/>
         </Content>
       </Container>
-    )
+    );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 5,
-    width: '100%'
-  },
   label: {
     color: MAIN_THEME_COLOR,
     fontWeight: '500'
@@ -483,25 +241,28 @@ const styles = StyleSheet.create({
   dividerText: {
     color:'#798d99'
   },
-  content: {
+  inputText: {
+    fontWeight: '300',
+    fontSize: 14
+  },
+  sameLineInput: {
     flex: 1,
-    width: '100%'
+    flexDirection: 'row',
+    alignItems: 'center'
   },
-  textarea: {
-    width: '100%',
-    marginTop: 8
+  textItemLeft:{
+    flex: 1,
+    justifyContent: 'flex-start',
+    flexDirection: 'row',
+    color: '#101010',
+    fontWeight: '400'
   },
-  itemPicker: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'flex-start'
+  textItemRight:{
+    color:  MAIN_THEME_COLOR,
+    fontWeight: '400'
   },
-  itemList: {
-    borderColor: '#c9c9c9',
-    paddingTop: 13,
-    paddingBottom: 13,
-    paddingRight: 16,
-    borderBottomWidth: 0.5,
-    marginLeft: 16
+  placeHolderItemRight: {
+    color: "#d3d3d3", 
+    fontWeight: '400'
   }
 })

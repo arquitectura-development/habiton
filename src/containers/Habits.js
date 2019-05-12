@@ -8,8 +8,15 @@ import {
 } from 'react-native'
 import { Text, Icon } from 'native-base';
 import { MAIN_THEME_COLOR } from '../constants';
+import { Navigation } from 'react-native-navigation';
 
 class HabitItem extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { 
+            habit : props.habit
+        };
+      }
 
     getCategoryColor = (score) => {
         if (score < 0) {
@@ -28,6 +35,21 @@ class HabitItem extends Component {
             return '#FF9800' //ORANGE
         }
     };
+
+    editHabit = () => {
+        Navigation.showModal({
+            stack: {
+              children: [{
+                component: {
+                  name: 'HabitForm',
+                  passProps: {
+                    habit: this.state.habit
+                  }
+                }
+              }]
+            }
+        });
+    }
 
     renderButtons = () => {
         const { type, score } = this.props;
@@ -68,13 +90,15 @@ class HabitItem extends Component {
         const { title, score } = this.props;
         return (
             <View style={styles.habitContainer}>
-                <View style={styles.habitInfo}>
-                    <Text style={styles.habitTitle}>{title}</Text>
-                    <View style={{...styles.habitBadge, 
-                        ...{backgroundColor: this.getCategoryColor(score)}}}>
-                        <Text style={styles.badgeText}>{score}</Text>
+                <TouchableOpacity style={styles.habitTouchable} onPress={this.editHabit} >
+                    <View style={styles.habitInfo}>
+                        <Text style={styles.habitTitle}>{title}</Text>
+                        <View style={{...styles.habitBadge, 
+                            ...{backgroundColor: this.getCategoryColor(score)}}}>
+                            <Text style={styles.badgeText}>{score}</Text>
+                        </View>
                     </View>
-                </View>
+                </TouchableOpacity>
                 <View style={styles.buttonsContainer}>
                     { this.renderButtons() }
                 </View>
@@ -110,6 +134,25 @@ export default class Habits extends Component {
       }
     };
   }
+
+  constructor(props) {
+    super(props);
+    Navigation.events().bindComponent(this);
+  }
+
+  navigationButtonPressed({ buttonId }) {
+    if(buttonId == 'addHabitButton'){
+        Navigation.showModal({
+          stack: {
+            children: [{
+              component: {
+                name: 'HabitForm'
+              }
+            }]
+          }
+        });
+        }
+    }
 
   render() {
     return (
@@ -217,5 +260,8 @@ const styles = StyleSheet.create({
         height: '50%',
         justifyContent: 'center',
         flexDirection: 'column',
-      }
+      },
+      habitTouchable:{
+        flex: 1
+    }
 })
