@@ -4,17 +4,22 @@ import {
   TouchableOpacity,
   View,
   ScrollView,
-  Platform
+  Platform,
+  ActivityIndicator,
+  FlatList
 } from 'react-native'
 import { Text, Icon } from 'native-base';
-import { MAIN_THEME_COLOR } from '../constants';
+import { MAIN_THEME_COLOR, GOOD, BAD, BOTH } from '../constants';
 import { Navigation } from 'react-native-navigation';
+import AppUser from "../models/AppUser";
+import HabitStore from "../models/HabitStore";
 
 class HabitItem extends Component {
     constructor(props) {
         super(props);
         this.state = { 
-            habit : props.habit
+            habit : props.habit,
+            isLoading: false
         };
       }
 
@@ -51,20 +56,31 @@ class HabitItem extends Component {
         });
     }
 
+    renderActivityIndicator = () => {
+        if(this.state.isLoading){
+            return(
+                <ActivityIndicator style={styles.habitActivityIndicator} size="small" color={MAIN_THEME_COLOR} />
+            )
+        }
+        else{
+            return null;
+        }
+    }
+
     renderButtons = () => {
-        const { type, score } = this.props;
-        if(type == "GOOD") {
+        const { habit } = this.state;
+        if(habit.habitType == GOOD) {
             return(
                 <TouchableOpacity style={{...styles.oneButton, 
-                    ...{backgroundColor: this.getCategoryColor(score)}}}>
+                    ...{backgroundColor: this.getCategoryColor(habit.score)}}}>
                     <Icon name='add' style={styles.iconButton}/>
                 </TouchableOpacity>
             )
         }
-        else if(type == "BAD") {
+        else if(habit.habitType == BAD) {
             return(
                 <TouchableOpacity style={{...styles.oneButton, 
-                    ...{backgroundColor: this.getCategoryColor(score)}}}>
+                    ...{backgroundColor: this.getCategoryColor(habit.score)}}}>
                     <Icon name='remove' style={styles.iconButton}/>
                 </TouchableOpacity>
             )
@@ -73,11 +89,11 @@ class HabitItem extends Component {
             return(
                 <View>
                     <TouchableOpacity style={{...styles.topButton, 
-                    ...{backgroundColor: this.getCategoryColor(score)}}}>
+                    ...{backgroundColor: this.getCategoryColor(habit.score)}}}>
                     <Icon name='add' style={styles.iconButton}/>
                     </TouchableOpacity>
                     <TouchableOpacity style={{...styles.bottomButton, 
-                        ...{backgroundColor: this.getCategoryColor(score)}}}>
+                        ...{backgroundColor: this.getCategoryColor(habit.score)}}}>
                         <Icon name='remove' style={styles.iconButton}/>
                     </TouchableOpacity>
                 </View>
@@ -87,15 +103,15 @@ class HabitItem extends Component {
     }
 
     render() {
-        const { title, score } = this.props;
+        const { habit } = this.state;
         return (
             <View style={styles.habitContainer}>
                 <TouchableOpacity style={styles.habitTouchable} onPress={this.editHabit} >
                     <View style={styles.habitInfo}>
-                        <Text style={styles.habitTitle}>{title}</Text>
+                        <Text style={styles.habitTitle}>{habit.name}</Text>
                         <View style={{...styles.habitBadge, 
-                            ...{backgroundColor: this.getCategoryColor(score)}}}>
-                            <Text style={styles.badgeText}>{score}</Text>
+                            ...{backgroundColor: this.getCategoryColor(habit.score)}}}>
+                            <Text style={styles.badgeText}>{habit.score}</Text>
                         </View>
                     </View>
                 </TouchableOpacity>
@@ -116,13 +132,13 @@ export default class Habits extends Component {
         title: {
           text: 'Habits'
         },
-        largeTitle: {
-          visible: true,
-          fontSize: 30,
-          fontWeight: 'bold',
-          color: 'black',
-          fontFamily: 'Helvetica'
-        },
+        // largeTitle: {
+        //   visible: true,
+        //   fontSize: 30,
+        //   fontWeight: 'bold',
+        //   color: 'black',
+        //   fontFamily: 'Helvetica'
+        // },
         rightButtons: [
             {
               id: 'addHabitButton',
@@ -138,6 +154,9 @@ export default class Habits extends Component {
   constructor(props) {
     super(props);
     Navigation.events().bindComponent(this);
+    this.state = { 
+        isLoading: true
+    };
   }
 
   navigationButtonPressed({ buttonId }) {
@@ -151,46 +170,63 @@ export default class Habits extends Component {
             }]
           }
         });
-        }
+      }
     }
 
-  render() {
-    return (
-        <ScrollView contentContainerStyle={styles.contentContainer}>
-            <HabitItem
-                title="Smoke"
-                score={-18}
-                type="BAD"
-            />
-            <HabitItem
-                title="Study"
-                score={42}
-                type="BOTH"
-            />
-            <HabitItem
-                title="Do clean code"
-                score={35}
-                type="GOOD"
-            />
-            <HabitItem
-                title="Distract you"
-                score={4}
-                type="BOTH"
-            />
-            <HabitItem
-                title="Eat healthy"
-                score={88}
-                type="BOTH"
-            />
-        </ScrollView>
-    )
-  }
+    async componentDidMount() {
+        this.getHabits();
+      }
+    
+      getHabits = async() => {
+        try {
+            this.setState({
+                isLoading : true
+              })
+            await HabitStore.getHabits(AppUser.id);
+            this.setState({
+              isLoading : false
+            })
+          } catch (err) {
+            console.log('Error: ', err)
+            this.setState({
+              isLoading : false
+            })
+          }
+      }
+
+  
+    ListEmpty = () => {
+        return (
+          <View style={styles.MainContainer}>
+            <Text style={{ textAlign: 'center' }}>No habits found</Text>
+          </View>
+        );
+    };
+    
+    
+    render() {
+        return (
+            <View style={styles.contentContainer}>
+                <View style={{flex:1}}>
+                <FlatList 
+                    data={HabitStore.habits}
+                    onRefresh={this.getHabits}
+                    refreshing={this.state.isLoading}
+                    renderItem={({item}) => <HabitItem habit={item}/>}
+                    keyExtractor={item => item.id.toString()}
+                    ListEmptyComponent={this.ListEmpty}
+                />
+                </View>
+            </View>
+        )
+    }
 }
 
 const styles = StyleSheet.create({
     contentContainer: {
         paddingVertical: 25,
-        paddingHorizontal: 20
+        paddingHorizontal: 20,
+        flex:1
       },
       habitContainer:{
           flexDirection: 'row',
@@ -263,5 +299,10 @@ const styles = StyleSheet.create({
       },
       habitTouchable:{
         flex: 1
-    }
+      },
+      habitActivityIndicator: {
+        position: 'absolute',
+        right: 10,
+        bottom: 10
+      },
 })

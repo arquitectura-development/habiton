@@ -22,8 +22,9 @@ import { MAIN_THEME_COLOR } from '../constants';
 import moment from 'moment';
 import TaskStore from '../models/TaskStore';
 import AppUser from '../models/AppUser';
+import { observer } from 'mobx-react/native';
 
-
+@observer
 export default class TaskForm extends Component {
   static options(passProps) {
     return {
@@ -110,7 +111,7 @@ export default class TaskForm extends Component {
     }
   }
 
-  updateTask = async () => {
+  updateTask = async () => {    
     try {
       const { task } = this.state;
       console.log("TASK HDJS");
@@ -173,11 +174,10 @@ export default class TaskForm extends Component {
   } 
 
   navigationButtonPressed({ buttonId }) {
-    Navigation.dismissModal(this.props.componentId);
     if(buttonId == "buttonSaveTask"){
       return this.saveTask();
     }else{
-      return;
+      return Navigation.dismissModal(this.props.componentId);;
     }
   }
 

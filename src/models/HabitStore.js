@@ -1,23 +1,23 @@
 import { observable, action } from "mobx";
 import { api } from "../api";
 
-class TaskStore {
+class HabitStore {
     @observable
-    tasks = [];
+    habits = [];
       
     @action
-    getTasks(userId) {
+    getHabits(userId) {
         return new Promise(async (resolve, reject) => {
             try {
                 const { data } = await api.get(
-                `/users/tasks?userId=${userId}`
+                `/users/habits?userId=${userId}`
                 );
                 console.log(data)
-                this.tasks = data;
+                this.habits = data;
                 resolve(data);
             }
             catch(e) {
-                console.log("ERROR GETTING TASKS")
+                console.log("ERROR GETTING HABITS")
                 console.log(e)
                 reject(e);
             }
@@ -25,19 +25,19 @@ class TaskStore {
     }
 
     @action
-    updateTask(userId, taskId, taskData) {
+    updateHabit(userId, habitId, habitData) {
         return new Promise(async (resolve, reject) => {
             try {
                 const { data } = await api.put(
-                `/users/tasks/${taskId}?userId=${userId}`, taskData
+                `/users/habits/${habitId}?userId=${userId}`, habitData
                 );
                 console.log(data)
                 resolve(data);
-                console.log(taskData)
+                console.log(habitData)
                 resolve();
             }
             catch(e) {
-                console.log("ERROR UPDATING TASK")
+                console.log("ERROR UPDATING HABIT")
                 console.log(e)
                 reject(e);
             }
@@ -45,17 +45,17 @@ class TaskStore {
     }
 
     @action
-    createTask(userId, taskData) {
+    createHabit(userId, habitData) {
         return new Promise(async (resolve, reject) => {
             try {
                 const { data } = await api.post(
-                `/users/tasks?userId=${userId}`, taskData
+                `/users/habits?userId=${userId}`, habitData
                 );
                 console.log(data)
                 resolve(data);
             }
             catch(e) {
-                console.log("ERROR CREATING TASK")
+                console.log("ERROR CREATING HABIT")
                 console.log(e)
                 reject(e);
             }
@@ -63,16 +63,16 @@ class TaskStore {
     }
 
     @action
-    deleteTask(userId, taskId) {
+    deleteHabit(userId, habitId) {
         return new Promise(async (resolve, reject) => {
             try {
                 const { data } = await api.delete(
-                `/users/tasks/${taskId}?userId=${userId}`);
+                `/users/habits/${habitId}?userId=${userId}`);
                 console.log(data)
                 resolve(data);
             }
             catch(e) {
-                console.log("ERROR DELETING TASK")
+                console.log("ERROR DELETING HABIT")
                 console.log(e)
                 reject(e);
             }
@@ -81,4 +81,4 @@ class TaskStore {
 
 }
 
-export default new TaskStore();
+export default new HabitStore();

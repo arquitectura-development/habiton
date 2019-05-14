@@ -14,6 +14,7 @@ import { Navigation } from 'react-native-navigation';
 import AppUser from "../models/AppUser";
 import TaskStore from "../models/TaskStore";
 import moment from 'moment';
+import {observer} from 'mobx-react/native'
 
 moment.locale("es");
 
@@ -33,7 +34,7 @@ class TaskItem extends Component {
                 component: {
                   name: 'TaskForm',
                   passProps: {
-                    task: this.state.task
+                    task: this.props.task
                   }
                 }
               }]
@@ -53,7 +54,6 @@ class TaskItem extends Component {
     }
 
     toogleCompleteTask = async () => {
-        console.log("toogle complete task")
         try {
           const { task } = this.state;
           this.setState({
@@ -71,15 +71,14 @@ class TaskItem extends Component {
               }
           );
           await TaskStore.getTasks(AppUser.id);
-          Navigation.dismissModal(this.props.componentId);
           console.log("SUCCESS UPDATE");
         } catch (error) {
           console.log(error);
         }
-      }
+    }
 
     renderDueDate = () => {
-        const { dueDate } = this.state.task;
+        const { dueDate } = this.props.task;
         if(moment().isSame(moment(dueDate,'DD/MM/YYYY'), 'day')){
             return ( 
                 <View style={styles.dueDateContainer} >
@@ -98,6 +97,7 @@ class TaskItem extends Component {
     }
 
     renderReminder = () => {
+        //renderear qué, muestro día y hora de la alerta? 
         const { reminder } = this.state.task;
         if(reminder){
             return ( 
@@ -109,7 +109,7 @@ class TaskItem extends Component {
     }
 
     render() {
-        const { task } = this.state;
+        const { task } = this.props;
         if(!task) return null;
         return (
             <View style={styles.taskContainer}>
@@ -138,7 +138,8 @@ class TaskItem extends Component {
         );
     }
 }
-
+        
+@observer
 export default class Tasks extends Component {
   static get options() {
     let iconByPlatform = Platform.OS === 'ios' ? {systemItem: 'add'} : {icon: require('../assets/icons/add.png')};
@@ -147,13 +148,13 @@ export default class Tasks extends Component {
         title: {
           text: 'Tasks'
         },
-        largeTitle: {
-          visible: true,
-          fontSize: 30,
-          fontWeight: 'bold',
-          color: 'black',
-          fontFamily: 'Helvetica'
-        },
+        // largeTitle: {
+        //   visible: true,
+        //   fontSize: 30,
+        //   fontWeight: 'bold',
+        //   color: 'black',
+        //   fontFamily: 'Helvetica'
+        // },
         rightButtons: [
             {
               id: 'addTaskButton',
@@ -183,7 +184,7 @@ export default class Tasks extends Component {
         this.setState({
             isLoading : true
           })
-        await TaskStore.getTasks(AppUser.id);
+          await TaskStore.getTasks(AppUser.id);
         this.setState({
           isLoading : false
         })
@@ -206,9 +207,9 @@ export default class Tasks extends Component {
                 }
               }]
             }
-          });
+        });
       }
-  }
+    }
 
   ListEmpty = () => {
     return (
@@ -221,16 +222,18 @@ export default class Tasks extends Component {
 
   render() {
     return (
-        <ScrollView style={styles.contentContainer}>
-            <FlatList 
-                data={TaskStore.tasks}
-                onRefresh={this.getTasks}
-                refreshing={this.state.isLoading}
-                renderItem={({item}) => <TaskItem task={item}/>}
-                keyExtractor={item => item.id.toString()}
-                ListEmptyComponent={this.ListEmpty}
-            />
-        </ScrollView>
+        <View style={styles.contentContainer}>
+            <View style={{flex:1}}>
+                <FlatList 
+                    data={TaskStore.tasks}
+                    onRefresh={this.getTasks}
+                    refreshing={this.state.isLoading}
+                    renderItem={({item}) => <TaskItem task={item}/>}
+                    keyExtractor={item => item.id.toString()}
+                    ListEmptyComponent={this.ListEmpty}
+                />
+            </View>
+        </View>
     )
   }
 }
@@ -239,7 +242,8 @@ export default class Tasks extends Component {
 const styles = StyleSheet.create({
     contentContainer: {
         paddingVertical: 25,
-        paddingHorizontal: 20
+        paddingHorizontal: 20,
+        flex:1
       },
       taskContainer:{
           flexDirection: 'row',

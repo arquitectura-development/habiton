@@ -22,8 +22,9 @@ import {
   Body
  } from 'native-base';
 import { Navigation } from 'react-native-navigation';
-import { MAIN_THEME_COLOR } from '../constants';
-
+import { MAIN_THEME_COLOR, GOOD, BAD, BOTH, EASY, MEDIUM, HARD } from '../constants';
+import HabitStore from '../models/HabitStore';
+import AppUser from '../models/AppUser';
 
 export default class HabitForm extends Component {
   static options(passProps) {
@@ -84,9 +85,36 @@ export default class HabitForm extends Component {
     }))
   }
 
-  saveHabit = async () => {
+  saveHabit = () => {
+    const { habit } = this.state;
+    if(habit.id){
+      console.log("UPDATE HABIT")
+      this.updateHabit();
+    }else{
+      console.log("CREATE HABIT")
+      this.createHabit();
+    }
+  }
+
+  updateHabit = async () => {
     try {
-      console.log("SAVE HABIT");
+      const { habit } = this.state;
+      let data = await HabitStore.updateHabit(AppUser.id, habit.id, habit);
+      await HabitStore.getHabits(AppUser.id);
+      Navigation.dismissModal(this.props.componentId);
+      console.log("SUCCESS UPDATE HABIT");
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  createHabit= async () => {
+    try {
+      const { habit } = this.state;
+      let data = await HabitStore.createHabit(AppUser.id, habit);
+      await HabitStore.getHabit(AppUser.id);
+      Navigation.dismissModal(this.props.componentId);
+      console.log("SUCCESS CREATE HABIT");
     } catch (error) {
       console.log(error);
     }
@@ -94,7 +122,9 @@ export default class HabitForm extends Component {
 
   deleteHabit = async () => {
     try {
-      console.log("DELETE HABIT CONFIRMED");
+      const { habit } = this.state;
+      let data = await HabitStore.deleteHabit(AppUser.id, habit.id);
+      console.log("SUCCESS DELETE HABIT");
       Navigation.dismissModal(this.props.componentId);
     } catch (error) {
       console.log(error);
@@ -118,34 +148,18 @@ export default class HabitForm extends Component {
   } 
 
   navigationButtonPressed({ buttonId }) {
-    Navigation.dismissModal(this.props.componentId);
     if(buttonId == "buttonSave"){
       return this.saveHabit();
-    }else{
-      return;
+    }
+    else{
+      Navigation.dismissModal(this.props.componentId);
     }
   }
-
-  retrieveData = async () => {
-    try {
-      console.log("mju")
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-async componentDidMount() {
-  try {
-    await this.retrieveData();
-  } catch (err) {
-    console.log('Error: ', err)
-  }
-}
 
   render() {
     const {
       name,
-      type,
+      habitType,
       difficulty
     } = this.state.habit;
     return(
@@ -185,12 +199,12 @@ async componentDidMount() {
                     placeholder="Select"
                     placeholderStyle={{ color: "#d3d3d3" }}
                     placeholderIconColor="#007aff"
-                    selectedValue={ type }
-                    onValueChange={val => this.onValueChange('type',val)}
+                    selectedValue={ habitType }
+                    onValueChange={val => this.onValueChange('habitType',val)}
                   >
-                    <Picker.Item label="Positive" value="Positive"/>
-                    <Picker.Item label="Negative" value="Negative" />
-                    <Picker.Item label="Both" value="Both" />
+                    <Picker.Item label="Positive" value={GOOD}/>
+                    <Picker.Item label="Negative" value={BAD} />
+                    <Picker.Item label="Both" value={BOTH} />
                   </Picker>
             </Item>
             <ListItem itemHeader style={styles.divider}>
@@ -217,9 +231,9 @@ async componentDidMount() {
                     selectedValue={ difficulty }
                     onValueChange={val => this.onValueChange('difficulty',val)}
                   >
-                    <Picker.Item label="Medium" value="Medium"/>
-                    <Picker.Item label="Hard" value="Hard" />
-                    <Picker.Item label="Easy" value="Easy" />
+                    <Picker.Item label="Easy" value={EASY} />
+                    <Picker.Item label="Medium" value={MEDIUM}/>
+                    <Picker.Item label="Hard" value={HARD} />
                   </Picker>
             </Item>
             { this.renderDeleteButton() }
