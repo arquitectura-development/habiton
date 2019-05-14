@@ -33,6 +33,7 @@ class TaskItem extends Component {
               children: [{
                 component: {
                   name: 'TaskForm',
+                  id:"TaskForm",
                   passProps: {
                     task: this.props.task
                   }
@@ -97,9 +98,8 @@ class TaskItem extends Component {
     }
 
     renderReminder = () => {
-        //renderear qué, muestro día y hora de la alerta? 
-        const { reminder } = this.state.task;
-        if(reminder){
+        const { reminder } = this.props.task;
+        if(reminder && moment(reminder, 'DD/MM/YYYY HH:mm').isBefore(moment().toDate())){
             return ( 
                 <Icon name='alarm' style={styles.alarmIcon}/>
             )

@@ -16,6 +16,7 @@
     "native-base": "^2.12.1",
     "react": "16.6.3",
     "react-native": "0.58.4",
+    "react-native-modal-datetime-picker": "^7.4.0",
     "react-native-navigation": "^2.17.0",
     "react-native-svg": "^9.4.0",
     "victory-native": "^32.0.2"

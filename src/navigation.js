@@ -105,6 +105,64 @@ export const goHome = () => {
     });
 }
 
+export const goHomeAdmin = () => {
+  Navigation.setRoot({
+    root: {
+      bottomTabs: {
+        id: 'HomeBottomTabs',
+        children: [
+          {
+            stack:{
+              children:[
+                {
+                  component: {
+                    name: 'Reports',
+                    options: {
+                      bottomTab: {
+                        text: 'Reports',
+                        fontSize: 11,
+                        icon: require("./assets/icons/chart.png"),
+                        selectedIcon: require("./assets/icons/fill_chart.png"),
+                        iconColor: DEFAULT_GRAY,
+                        selectedIconColor: MAIN_THEME_COLOR,
+                        textColor: DEFAULT_GRAY,
+                        selectedTextColor: MAIN_THEME_COLOR
+                      }
+                    }
+                  },
+                },
+              ]
+            }
+          },
+          {
+            stack:{
+              children:[
+                {
+                  component: {
+                    name: 'Settings',
+                    options: {
+                      bottomTab: {
+                        text: 'Settings',
+                        fontSize: 11,
+                        icon: require("./assets/icons/settings.png"),
+                        selectedIcon: require("./assets/icons/fill_settings.png"),
+                        iconColor: DEFAULT_GRAY,
+                        selectedIconColor: MAIN_THEME_COLOR,
+                        textColor: DEFAULT_GRAY,
+                        selectedTextColor: MAIN_THEME_COLOR
+                      }
+                    }
+                  },
+                }
+              ]
+            }
+          }
+        ],
+      }
+    }
+  });
+}
+
 
 export const goLogin = () => {
   Navigation.setRoot({

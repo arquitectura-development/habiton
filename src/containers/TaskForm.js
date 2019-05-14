@@ -3,7 +3,8 @@ import {
   View,
   StyleSheet,
   Text,
-  Alert
+  Alert,
+  TouchableOpacity
 } from 'react-native'
 import {
   Container,
@@ -17,6 +18,7 @@ import {
   DatePicker,
   ListItem
  } from 'native-base';
+ import DateTimePicker from "react-native-modal-datetime-picker";
 import { Navigation } from 'react-native-navigation';
 import { MAIN_THEME_COLOR } from '../constants';
 import moment from 'moment';
@@ -70,9 +72,24 @@ export default class TaskForm extends Component {
         reminder: !task.reminder ? null : moment(task.reminder, 'DD/MM/YYYY HH:mm').toDate(),
         dueDate: !task.dueDate ? null : moment(task.dueDate, 'DD/MM/YYYY').toDate(),
         completionDate: !task.completionDate ? null : moment(task.completionDate, 'DD/MM/YYYY').toDate()
-      }
+      },
+      isDateTimePickerVisible: false
     };
   }
+
+  showReminderDateTimePicker = () => {
+    this.setState({ isDateTimePickerVisible: true });
+  };
+
+  hideReminderDateTimePicker = () => {
+    this.setState({ isDateTimePickerVisible: false });
+  };
+
+  setReminder = date => {
+    console.log("A date has been picked: ", date);
+    this.onValueChange('reminder', date);
+    this.hideReminderDateTimePicker();
+  };
 
   renderDeleteButton = () => {
     if(this.props.task ){
@@ -117,7 +134,7 @@ export default class TaskForm extends Component {
       console.log("TASK HDJS");
       let data = await TaskStore.updateTask(AppUser.id, task.id, {
         ...task,
-        reminder: !task.reminder ? null : moment(task.dueDate).format('DD/MM/YYYY HH:mm'),
+        reminder: !task.reminder ? null : moment(task.reminder).format('DD/MM/YYYY HH:mm'),
         dueDate: !task.dueDate ? null : moment(task.dueDate).format('DD/MM/YYYY'),
         completionDate: !task.completionDate ? null : moment(task.completionDate).format('DD/MM/YYYY')
       });
@@ -134,7 +151,7 @@ export default class TaskForm extends Component {
       const { task } = this.state;
       let data = await TaskStore.createTask(AppUser.id, {
         ...task,
-        reminder: !task.reminder ? null : moment(task.dueDate).format('DD/MM/YYYY HH:mm'),
+        reminder: !task.reminder ? null : moment(task.reminder).format('DD/MM/YYYY HH:mm'),
         dueDate: !task.dueDate ? null : moment(task.dueDate).format('DD/MM/YYYY'),
         completionDate: !task.completionDate ? null : moment(task.completionDate).format('DD/MM/YYYY')
       });
@@ -151,6 +168,7 @@ export default class TaskForm extends Component {
       const { task } = this.state;
       let data = await TaskStore.deleteTask(AppUser.id, task.id);
       console.log("SUCCESS DELETE TASK");
+      await TaskStore.getTasks(AppUser.id);
       Navigation.dismissModal(this.props.componentId);
     } catch (error) {
       console.log(error);
@@ -176,8 +194,8 @@ export default class TaskForm extends Component {
   navigationButtonPressed({ buttonId }) {
     if(buttonId == "buttonSaveTask"){
       return this.saveTask();
-    }else{
-      return Navigation.dismissModal(this.props.componentId);;
+    }else if(buttonId == "buttonCancelTask"){
+       Navigation.dismissModal(this.props.componentId);
     }
   }
 
@@ -241,18 +259,23 @@ export default class TaskForm extends Component {
             </ListItem>
             <Item style={styles.itemList} last>
               <View style={styles.sameLineInput}>
-              <Text style={styles.textItemLeft}>Remind me</Text>
-                  <DatePicker
-                    minimumDate={new Date()}
-                    locale={"es"}
-                    modalTransparent={false}
-                    animationType={"fade"}
-                    androidMode={"default"}
-                    textStyle={styles.textItemRight}
-                    placeHolderTextStyle={styles.placeHolderItemRight}
-                    onDateChange={val => this.onValueChange('reminder', val)}
-                    />
-              </View>
+                <Text style={styles.textItemLeft}>Remind me</Text>
+                  <TouchableOpacity 
+                    onPress={this.showReminderDateTimePicker}
+                    style={styles.datepickerButton}
+                    >
+                    <Text style={styles.textItemRight}>{reminder ? moment(reminder).format('D/M/YYYY HH:mm') : 'Select Date'}</Text>
+                  </TouchableOpacity>
+                </View>
+              <DateTimePicker
+                  mode="datetime"
+                  date={reminder ? reminder : moment().toDate() }
+                  is24Hour={true}
+                  isVisible={this.state.isDateTimePickerVisible}
+                  onConfirm={this.setReminder}
+                  onCancel={this.hideReminderDateTimePicker}
+                />
+              
             </Item>
             { this.renderDeleteButton() }
           </Form>
@@ -291,10 +314,14 @@ const styles = StyleSheet.create({
   },
   textItemRight:{
     color:  MAIN_THEME_COLOR,
-    fontWeight: '400'
+    fontWeight: '400',
+    fontSize: 16
   },
   placeHolderItemRight: {
     color: "#d3d3d3", 
     fontWeight: '400'
+  },
+  datepickerButton: {
+    padding: 10
   }
 })
