@@ -13,6 +13,7 @@ import { MAIN_THEME_COLOR, GOOD, BAD, BOTH } from '../constants';
 import { Navigation } from 'react-native-navigation';
 import AppUser from "../models/AppUser";
 import HabitStore from "../models/HabitStore";
+import { observer } from 'mobx-react/native';
 
 class HabitItem extends Component {
     constructor(props) {
@@ -123,6 +124,7 @@ class HabitItem extends Component {
     }
 }
 
+@observer
 export default class Habits extends Component {
   static get options() {
     let iconByPlatform = Platform.OS === 'ios' ? {systemItem: 'add'} : {icon: require('../assets/icons/add.png')};

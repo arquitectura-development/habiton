@@ -48,9 +48,9 @@ class HabitStore {
     createHabit(userId, habitData) {
         return new Promise(async (resolve, reject) => {
             try {
+                console.log(habitData)
                 const { data } = await api.post(
-                `/users/habits?userId=${userId}`, habitData
-                );
+                `/users/habits?userId=${userId}`, habitData);
                 console.log(data)
                 resolve(data);
             }

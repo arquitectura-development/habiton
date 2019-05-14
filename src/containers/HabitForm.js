@@ -25,7 +25,9 @@ import { Navigation } from 'react-native-navigation';
 import { MAIN_THEME_COLOR, GOOD, BAD, BOTH, EASY, MEDIUM, HARD } from '../constants';
 import HabitStore from '../models/HabitStore';
 import AppUser from '../models/AppUser';
+import { observer } from 'mobx-react/native';
 
+@observer
 export default class HabitForm extends Component {
   static options(passProps) {
     return {
@@ -99,7 +101,10 @@ export default class HabitForm extends Component {
   updateHabit = async () => {
     try {
       const { habit } = this.state;
-      let data = await HabitStore.updateHabit(AppUser.id, habit.id, habit);
+      let data = await HabitStore.updateHabit(AppUser.id, habit.id, {
+        ...habit,
+        userID: AppUser.id
+      });
       await HabitStore.getHabits(AppUser.id);
       Navigation.dismissModal(this.props.componentId);
       console.log("SUCCESS UPDATE HABIT");
@@ -111,8 +116,11 @@ export default class HabitForm extends Component {
   createHabit= async () => {
     try {
       const { habit } = this.state;
-      let data = await HabitStore.createHabit(AppUser.id, habit);
-      await HabitStore.getHabit(AppUser.id);
+      let data = await HabitStore.createHabit(AppUser.id, {
+        ...habit,
+        userID: AppUser.id
+      });
+      await HabitStore.getHabits(AppUser.id);
       Navigation.dismissModal(this.props.componentId);
       console.log("SUCCESS CREATE HABIT");
     } catch (error) {
@@ -125,6 +133,7 @@ export default class HabitForm extends Component {
       const { habit } = this.state;
       let data = await HabitStore.deleteHabit(AppUser.id, habit.id);
       console.log("SUCCESS DELETE HABIT");
+      await HabitStore.getHabits(AppUser.id);
       Navigation.dismissModal(this.props.componentId);
     } catch (error) {
       console.log(error);
