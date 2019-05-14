@@ -45,6 +45,24 @@ class HabitStore {
     }
 
     @action
+    updateScore(userId, habitId, habitData, isPositive) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const { data } = await api.put(
+                `/users/habits/${habitId}?positive=${isPositive}&updateScore=true&userId=${userId}`, habitData);
+                console.log(data)
+                resolve(data);
+                console.log(habitData)
+            }
+            catch(e) {
+                console.log("ERROR UPDATING HABIT")
+                console.log(e)
+                reject(e);
+            }
+        })
+    }
+
+    @action
     createHabit(userId, habitData) {
         return new Promise(async (resolve, reject) => {
             try {

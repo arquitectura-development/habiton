@@ -57,10 +57,30 @@ class HabitItem extends Component {
         });
     }
 
+    updateScore = async (positive) => {
+        try {
+          const { habit } = this.state;
+          this.setState({
+              isLoading: true
+          })
+          let data = await HabitStore.updateScore(AppUser.id, habit.id, habit, positive);
+          this.setState(
+              {
+                  task: data,
+                  isLoading: false
+              }
+          );
+          console.log("SUCCESS SCORE UPDATE");
+          console.log(data)
+        } catch (error) {
+          console.log(error);
+        }
+    }
+
     renderActivityIndicator = () => {
         if(this.state.isLoading){
             return(
-                <ActivityIndicator style={styles.habitActivityIndicator} size="small" color={MAIN_THEME_COLOR} />
+                <ActivityIndicator style={styles.habitActivityIndicator} size="small" color={this.getCategoryColor(this.state.habit.score)} />
             )
         }
         else{
@@ -73,7 +93,9 @@ class HabitItem extends Component {
         if(habit.habitType == GOOD) {
             return(
                 <TouchableOpacity style={{...styles.oneButton, 
-                    ...{backgroundColor: this.getCategoryColor(habit.score)}}}>
+                    ...{backgroundColor: this.getCategoryColor(habit.score)}}}
+                    onPress={() => this.updateScore(true)}
+                    >
                     <Icon name='add' style={styles.iconButton}/>
                 </TouchableOpacity>
             )
@@ -81,7 +103,9 @@ class HabitItem extends Component {
         else if(habit.habitType == BAD) {
             return(
                 <TouchableOpacity style={{...styles.oneButton, 
-                    ...{backgroundColor: this.getCategoryColor(habit.score)}}}>
+                    ...{backgroundColor: this.getCategoryColor(habit.score)}}}
+                    onPress={() => this.updateScore(false)}
+                    >
                     <Icon name='remove' style={styles.iconButton}/>
                 </TouchableOpacity>
             )
@@ -90,11 +114,15 @@ class HabitItem extends Component {
             return(
                 <View>
                     <TouchableOpacity style={{...styles.topButton, 
-                    ...{backgroundColor: this.getCategoryColor(habit.score)}}}>
+                    ...{backgroundColor: this.getCategoryColor(habit.score)}}}
+                    onPress={() => this.updateScore(true)}
+                    >
                     <Icon name='add' style={styles.iconButton}/>
                     </TouchableOpacity>
                     <TouchableOpacity style={{...styles.bottomButton, 
-                        ...{backgroundColor: this.getCategoryColor(habit.score)}}}>
+                        ...{backgroundColor: this.getCategoryColor(habit.score)}}}
+                        onPress={() => this.updateScore(false)}
+                        >
                         <Icon name='remove' style={styles.iconButton}/>
                     </TouchableOpacity>
                 </View>
@@ -114,6 +142,7 @@ class HabitItem extends Component {
                             ...{backgroundColor: this.getCategoryColor(habit.score)}}}>
                             <Text style={styles.badgeText}>{habit.score}</Text>
                         </View>
+                        { this.renderActivityIndicator() }
                     </View>
                 </TouchableOpacity>
                 <View style={styles.buttonsContainer}>
