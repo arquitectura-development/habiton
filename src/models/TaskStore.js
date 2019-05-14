@@ -79,6 +79,11 @@ class TaskStore {
         })
     }
 
+    @action
+    clear() {
+        this.tasks = [];
+    }
+
 }
 
 export default new TaskStore();

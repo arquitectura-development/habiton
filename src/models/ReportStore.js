@@ -73,6 +73,19 @@ class ReportStore {
         })
     }
 
+    @action
+    clear() {
+        this.tasksReport = {};
+        this.habitsReport = {};
+        this.userReport = {
+            badHabits: [],
+            goodHabits: [],
+            todayTasks: [],
+            delayedTasks: []
+        };
+    }
+
+
 }
 
 export default new ReportStore();

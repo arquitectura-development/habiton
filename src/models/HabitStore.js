@@ -79,6 +79,11 @@ class HabitStore {
         })
     }
 
+    @action
+    clear() {
+        this.habits = [];
+    }
+
 }
 
 export default new HabitStore();

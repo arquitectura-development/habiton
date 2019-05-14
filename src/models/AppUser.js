@@ -1,6 +1,9 @@
 import { observable, action } from "mobx";
 import { AsyncStorage } from 'react-native';
 import { api } from "../api";
+import TaskStore from "./TaskStore";
+import HabitStore from "./HabitStore";
+import ReportStore from "./ReportStore";
 
 class AppUser {
   @observable
@@ -58,12 +61,15 @@ class AppUser {
 
 	@action
 	logout() {
-		return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             this.name = '';
-			this.email = '';
+            this.email = ''; 
             this.id = '';
+            TaskStore.clear();
+            HabitStore.clear();
+            ReportStore.clear();
             this._clearUser();
-		})
+        })
     }
 
     _persistUser = async () => {
@@ -113,6 +119,9 @@ class AppUser {
                 this.name = '';
                 this.email = '';
                 this.id = '';
+                TaskStore.clear();
+                HabitStore.clear();
+                ReportStore.clear();
                 this._clearUser();
                 resolve(this);
             }
