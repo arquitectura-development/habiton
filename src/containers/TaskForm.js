@@ -20,6 +20,8 @@ import {
 import { Navigation } from 'react-native-navigation';
 import { MAIN_THEME_COLOR } from '../constants';
 import moment from 'moment';
+import TaskStore from '../models/TaskStore';
+import AppUser from '../models/AppUser';
 
 
 export default class TaskForm extends Component {
@@ -31,14 +33,14 @@ export default class TaskForm extends Component {
         },
         leftButtons: [
           {
-            id: 'buttonCancel',
+            id: 'buttonCancelTask',
             text: 'Back',
             color: MAIN_THEME_COLOR
           }
         ],
         rightButtons: [
           {
-            id: 'buttonSave',
+            id: 'buttonSaveTask',
             text: 'Done',
             color: MAIN_THEME_COLOR
           }
@@ -50,8 +52,24 @@ export default class TaskForm extends Component {
     super(props);
     this.onValueChange = this.onValueChange.bind(this);
     Navigation.events().bindComponent(this);
+    const { task } = this.props;
     this.state = {
-      task: this.props.task ? this.props.task : {}
+      task: !task ?
+      {
+        reminder: null,
+        dueDate: new Date(),
+        completionDate: null,
+        title: '',
+        description: '',
+        done: false
+      }
+      :
+      {
+        ...task,
+        reminder: !task.reminder ? null : moment(task.reminder, 'DD/MM/YYYY HH:mm').toDate(),
+        dueDate: !task.dueDate ? null : moment(task.dueDate, 'DD/MM/YYYY').toDate(),
+        completionDate: !task.completionDate ? null : moment(task.completionDate, 'DD/MM/YYYY').toDate()
+      }
     };
   }
 
@@ -81,10 +99,47 @@ export default class TaskForm extends Component {
     }))
   }
 
-  saveTask = async () => {
+  saveTask = () => {
+    const { task } = this.state;
+    if(task.id){
+      console.log("UPDATE TASK")
+      this.updateTask();
+    }else{
+      console.log("CREATE TASK")
+      this.createTask();
+    }
+  }
+
+  updateTask = async () => {
     try {
+      const { task } = this.state;
       console.log("TASK HDJS");
-      // await AsyncStorage.setItem('USER', JSON.stringify(user));
+      let data = await TaskStore.updateTask(AppUser.id, task.id, {
+        ...task,
+        reminder: !task.reminder ? null : moment(task.dueDate).format('DD/MM/YYYY HH:mm'),
+        dueDate: !task.dueDate ? null : moment(task.dueDate).format('DD/MM/YYYY'),
+        completionDate: !task.completionDate ? null : moment(task.completionDate).format('DD/MM/YYYY')
+      });
+      await TaskStore.getTasks(AppUser.id);
+      Navigation.dismissModal(this.props.componentId);
+      console.log("SUCCESS UPDATE");
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  createTask = async () => {
+    try {
+      const { task } = this.state;
+      let data = await TaskStore.createTask(AppUser.id, {
+        ...task,
+        reminder: !task.reminder ? null : moment(task.dueDate).format('DD/MM/YYYY HH:mm'),
+        dueDate: !task.dueDate ? null : moment(task.dueDate).format('DD/MM/YYYY'),
+        completionDate: !task.completionDate ? null : moment(task.completionDate).format('DD/MM/YYYY')
+      });
+      await TaskStore.getTasks(AppUser.id);
+      Navigation.dismissModal(this.props.componentId);
+      console.log("SUCCESS CREATE");
     } catch (error) {
       console.log(error);
     }
@@ -92,7 +147,9 @@ export default class TaskForm extends Component {
 
   deleteTask = async () => {
     try {
-      console.log("DELETE TASK CONFIRMED");
+      const { task } = this.state;
+      let data = await TaskStore.deleteTask(AppUser.id, task.id);
+      console.log("SUCCESS DELETE TASK");
       Navigation.dismissModal(this.props.componentId);
     } catch (error) {
       console.log(error);
@@ -117,25 +174,12 @@ export default class TaskForm extends Component {
 
   navigationButtonPressed({ buttonId }) {
     Navigation.dismissModal(this.props.componentId);
-    if(buttonId == "buttonSave"){
+    if(buttonId == "buttonSaveTask"){
       return this.saveTask();
     }else{
       return;
     }
   }
-
-async componentDidMount() {
-  try {
-    // const { dueDate, reminder } = this.props.task;
-    // if(dueDate && reminder){
-    //   this.setState({
-    //     dueDate: new Date
-    //   })
-    // }
-  } catch (err) {
-    console.log('Error: ', err)
-  }
-}
 
   render() {
     const {
@@ -179,14 +223,13 @@ async componentDidMount() {
               <View style={styles.sameLineInput}>
               <Text style={styles.textItemLeft}>Due date</Text>
                   <DatePicker
-                    defaultDate={new Date()}
+                    defaultDate={moment(dueDate,'DD/MM/YYYY').toDate()}
                     minimumDate={new Date()}
                     locale={"es"}
                     timeZoneOffsetInMinutes={undefined}
                     modalTransparent={false}
                     animationType={"fade"}
                     androidMode={"default"}
-                    placeHolderText="Select date"
                     textStyle={styles.textItemRight}
                     placeHolderTextStyle={styles.placeHolderItemRight}
                     onDateChange={val => this.onValueChange('dueDate', val)}
@@ -200,13 +243,11 @@ async componentDidMount() {
               <View style={styles.sameLineInput}>
               <Text style={styles.textItemLeft}>Remind me</Text>
                   <DatePicker
-                    defaultDate={new Date()}
                     minimumDate={new Date()}
                     locale={"es"}
                     modalTransparent={false}
                     animationType={"fade"}
                     androidMode={"default"}
-                    placeHolderText="Select date"
                     textStyle={styles.textItemRight}
                     placeHolderTextStyle={styles.placeHolderItemRight}
                     onDateChange={val => this.onValueChange('reminder', val)}

@@ -21,7 +21,8 @@ class TaskItem extends Component {
     constructor(props) {
         super(props);
         this.state = { 
-            task : props.task
+            task : props.task,
+            isLoading: false
         };
       }
     
@@ -39,6 +40,43 @@ class TaskItem extends Component {
             }
         });
     }
+
+    renderActivityIndicator = () => {
+        if(this.state.isLoading){
+            return(
+                <ActivityIndicator style={styles.taskActivityIndicator} size="small" color={MAIN_THEME_COLOR} />
+            )
+        }
+        else{
+            return null;
+        }
+    }
+
+    toogleCompleteTask = async () => {
+        console.log("toogle complete task")
+        try {
+          const { task } = this.state;
+          this.setState({
+              isLoading: true
+          })
+          let data = await TaskStore.updateTask(AppUser.id, task.id, {
+            ...task,
+            done: !task.done,
+            completionDate: !task.done ? moment().format('DD/MM/YYYY') : null
+          });
+          this.setState(
+              {
+                  task: data,
+                  isLoading: false
+              }
+          );
+          await TaskStore.getTasks(AppUser.id);
+          Navigation.dismissModal(this.props.componentId);
+          console.log("SUCCESS UPDATE");
+        } catch (error) {
+          console.log(error);
+        }
+      }
 
     renderDueDate = () => {
         const { dueDate } = this.state.task;
@@ -83,21 +121,17 @@ class TaskItem extends Component {
                         { this.renderReminder() }
                     </View>
                     { this.renderDueDate() }
+                    { this.renderActivityIndicator() }
                 </View>
                 </TouchableOpacity>
                
                 <View style={styles.checkBoxContainer}>
+                
                     <CheckBox
                         style={{backgroundColor: (!task.done) ? 'white' : 'blue'}}
                         color="blue" 
                         checked={task.done}
-                        onPress={() => {this.setState({
-                            task: {
-                                    ...task,
-                                    done: !task.done
-                                }
-                            }
-                        )}} 
+                        onPress={this.toogleCompleteTask} 
                     />
                 </View>
             </View>
@@ -141,17 +175,24 @@ export default class Tasks extends Component {
   }
 
   async componentDidMount() {
+    this.getTasks();
+  }
+
+  getTasks = async() => {
     try {
-      await TaskStore.getTasks(AppUser.id);
-      this.setState({
-        isLoading : false
-      })
-    } catch (err) {
-      console.log('Error: ', err)
-      this.setState({
-        isLoading : false
-      })
-    }
+        this.setState({
+            isLoading : true
+          })
+        await TaskStore.getTasks(AppUser.id);
+        this.setState({
+          isLoading : false
+        })
+      } catch (err) {
+        console.log('Error: ', err)
+        this.setState({
+          isLoading : false
+        })
+      }
   }
 
 
@@ -169,25 +210,28 @@ export default class Tasks extends Component {
       }
   }
 
+  ListEmpty = () => {
+    return (
+      <View style={styles.MainContainer}>
+        <Text style={{ textAlign: 'center' }}>No tasks found</Text>
+      </View>
+    );
+  };
+
 
   render() {
-    if(this.state.isLoading){
-        return(
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={MAIN_THEME_COLOR} />
-          </View>
-        )
-    }else{
-        return (
-            <ScrollView style={styles.contentContainer}>
-                <FlatList 
-                    data={TaskStore.tasks}
-                    renderItem={({item}) => <TaskItem task={item}/>}
-                    keyExtractor={item => item.id.toString()}
-                />
-            </ScrollView>
-        )
-    }
+    return (
+        <ScrollView style={styles.contentContainer}>
+            <FlatList 
+                data={TaskStore.tasks}
+                onRefresh={this.getTasks}
+                refreshing={this.state.isLoading}
+                renderItem={({item}) => <TaskItem task={item}/>}
+                keyExtractor={item => item.id.toString()}
+                ListEmptyComponent={this.ListEmpty}
+            />
+        </ScrollView>
+    )
   }
 }
 
@@ -260,6 +304,11 @@ const styles = StyleSheet.create({
           fontSize: 18,
           position: 'absolute',
           right: 0
+      },
+      taskActivityIndicator: {
+        position: 'absolute',
+        right: 10,
+        bottom: 10
       },
       emptyListText:{
         backgroundColor:  '#F4F4F4',
