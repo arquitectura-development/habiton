@@ -51,6 +51,9 @@ class UsersReport extends Component {
         isLoading : false
       })
     } catch (err) {
+      this.setState({
+        isLoading : false
+      })
       console.log('Error: ', err)
     }
   }
