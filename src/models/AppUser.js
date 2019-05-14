@@ -106,18 +106,23 @@ class AppUser {
     };
 
     @action
-    deleteAccount = async () => {
-        try {
-            this.name = '';
-			this.email = '';
-            this.id = '';
-            this._clearUser();
-        } catch (error) {
-          console.log("ERROR DELETING USER")
-        }
-    };
-    
-
+    deleteAccount() {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let { data } = await api.delete(`/users?userId=${AppUser.id}`);
+                this.name = '';
+                this.email = '';
+                this.id = '';
+                this._clearUser();
+                resolve(this);
+            }
+            catch(e) {
+                console.log("ERROR DELETING ACCOUNT")
+                console.log(e)
+                reject(e);
+            }
+        })
+    }
 }
 
 export default new AppUser();

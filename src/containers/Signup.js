@@ -32,11 +32,13 @@ export default class Signup extends Component {
             goHome();
             this.setState({isLoading: false});
         }).catch(e => {
+            console.log(e.response)
+            console.log(e.response.status )
             let title = "Error";
-            let subtitle = "Ocurrió un problema, intenta más tarde.";
-            if(e.statusCode == 401){
-                title="Error de autenticación";
-                subtitle="Usuario o contraseña incorrecta.";
+            let subtitle = "There was a problem, try again later.";
+            if(e.response.status == 409){
+                title="Already have an account";
+                subtitle="There is an account associated with this email. Please login.";
             }
             Alert.alert(title, subtitle);
             this.setState({isLoading: false});
