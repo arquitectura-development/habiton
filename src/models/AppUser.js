@@ -23,6 +23,8 @@ class AppUser {
                     email: email,
                     name: name
                 });
+                console.log("USER SIGNUP")
+                console.log(data)
                 this.name = data.name;
                 this.email = data.email;
                 this.id = data.id;
@@ -44,6 +46,8 @@ class AppUser {
                 let { data } = await api.post(`/users/login`, {
                     email: email
                 });
+                console.log("USER LOGIN")
+                console.log(data)
                 this.name = data.name;
                 this.email = data.email;
                 this.id = data.id;

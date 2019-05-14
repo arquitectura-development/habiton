@@ -20,7 +20,8 @@ class HabitItem extends Component {
         super(props);
         this.state = { 
             habit : props.habit,
-            isLoading: false
+            isLoading: false,
+            score: props.habit.score
         };
       }
 
@@ -63,24 +64,27 @@ class HabitItem extends Component {
           this.setState({
               isLoading: true
           })
-          let data = await HabitStore.updateScore(AppUser.id, habit.id, habit, positive);
+          let data = await HabitStore.updateScore(AppUser.id, habit.id, {
+              ...habit,
+              userID: AppUser.id
+          }, positive);
           this.setState(
               {
                   task: data,
-                  isLoading: false
+                  isLoading: false,
+                  score: data.score
               }
           );
-          console.log("SUCCESS SCORE UPDATE");
-          console.log(data)
         } catch (error) {
           console.log(error);
         }
     }
 
     renderActivityIndicator = () => {
-        if(this.state.isLoading){
+        const { score, isLoading } = this.state;
+        if(isLoading){
             return(
-                <ActivityIndicator style={styles.habitActivityIndicator} size="small" color={this.getCategoryColor(this.state.habit.score)} />
+                <ActivityIndicator style={styles.habitActivityIndicator} size="small" color={this.getCategoryColor(score)} />
             )
         }
         else{
@@ -90,10 +94,11 @@ class HabitItem extends Component {
 
     renderButtons = () => {
         const { habit } = this.props;
+        const { score } = this.state;
         if(habit.habitType == GOOD) {
             return(
                 <TouchableOpacity style={{...styles.oneButton, 
-                    ...{backgroundColor: this.getCategoryColor(habit.score)}}}
+                    ...{backgroundColor: this.getCategoryColor(score)}}}
                     onPress={() => this.updateScore(true)}
                     >
                     <Icon name='add' style={styles.iconButton}/>
@@ -103,7 +108,7 @@ class HabitItem extends Component {
         else if(habit.habitType == BAD) {
             return(
                 <TouchableOpacity style={{...styles.oneButton, 
-                    ...{backgroundColor: this.getCategoryColor(habit.score)}}}
+                    ...{backgroundColor: this.getCategoryColor(score)}}}
                     onPress={() => this.updateScore(false)}
                     >
                     <Icon name='remove' style={styles.iconButton}/>
@@ -114,13 +119,13 @@ class HabitItem extends Component {
             return(
                 <View>
                     <TouchableOpacity style={{...styles.topButton, 
-                    ...{backgroundColor: this.getCategoryColor(habit.score)}}}
+                    ...{backgroundColor: this.getCategoryColor(score)}}}
                     onPress={() => this.updateScore(true)}
                     >
                     <Icon name='add' style={styles.iconButton}/>
                     </TouchableOpacity>
                     <TouchableOpacity style={{...styles.bottomButton, 
-                        ...{backgroundColor: this.getCategoryColor(habit.score)}}}
+                        ...{backgroundColor: this.getCategoryColor(score)}}}
                         onPress={() => this.updateScore(false)}
                         >
                         <Icon name='remove' style={styles.iconButton}/>
@@ -133,14 +138,15 @@ class HabitItem extends Component {
 
     render() {
         const { habit } = this.props;
+        const { score } = this.state;
         return (
             <View style={styles.habitContainer}>
                 <TouchableOpacity style={styles.habitTouchable} onPress={this.editHabit} >
                     <View style={styles.habitInfo}>
                         <Text style={styles.habitTitle}>{habit.name}</Text>
                         <View style={{...styles.habitBadge, 
-                            ...{backgroundColor: this.getCategoryColor(habit.score)}}}>
-                            <Text style={styles.badgeText}>{habit.score}</Text>
+                            ...{backgroundColor: this.getCategoryColor(score)}}}>
+                            <Text style={styles.badgeText}>{score}</Text>
                         </View>
                         { this.renderActivityIndicator() }
                     </View>

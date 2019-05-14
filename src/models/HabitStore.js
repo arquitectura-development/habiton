@@ -29,7 +29,7 @@ class HabitStore {
         return new Promise(async (resolve, reject) => {
             try {
                 const { data } = await api.put(
-                `/users/habits/${habitId}?userId=${userId}`, habitData
+                `/users/habits/${habitId}?positive=true&updateScore=false&userId=${userId}`, habitData
                 );
                 console.log(data)
                 resolve(data);
@@ -48,6 +48,11 @@ class HabitStore {
     updateScore(userId, habitId, habitData, isPositive) {
         return new Promise(async (resolve, reject) => {
             try {
+                console.log("SEND DATA")
+                
+                console.log(habitData)
+                console.log("URL")
+                console.log(`/users/habits/${habitId}?positive=${isPositive}&updateScore=true&userId=${userId}`)
                 const { data } = await api.put(
                 `/users/habits/${habitId}?positive=${isPositive}&updateScore=true&userId=${userId}`, habitData);
                 console.log(data)
