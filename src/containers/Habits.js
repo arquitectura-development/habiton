@@ -3,7 +3,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
-  ScrollView,
   Platform,
   ActivityIndicator,
   FlatList
@@ -15,6 +14,7 @@ import AppUser from "../models/AppUser";
 import HabitStore from "../models/HabitStore";
 import { observer } from 'mobx-react/native';
 
+@observer
 class HabitItem extends Component {
     constructor(props) {
         super(props);
@@ -49,7 +49,7 @@ class HabitItem extends Component {
                 component: {
                   name: 'HabitForm',
                   passProps: {
-                    habit: this.state.habit
+                    habit: this.props.habit
                   }
                 }
               }]
@@ -69,7 +69,7 @@ class HabitItem extends Component {
     }
 
     renderButtons = () => {
-        const { habit } = this.state;
+        const { habit } = this.props;
         if(habit.habitType == GOOD) {
             return(
                 <TouchableOpacity style={{...styles.oneButton, 
@@ -104,7 +104,7 @@ class HabitItem extends Component {
     }
 
     render() {
-        const { habit } = this.state;
+        const { habit } = this.props;
         return (
             <View style={styles.habitContainer}>
                 <TouchableOpacity style={styles.habitTouchable} onPress={this.editHabit} >

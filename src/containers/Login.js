@@ -10,10 +10,12 @@ import {
   ActivityIndicator
 } from "react-native";
 import { Item, Input, Label } from 'native-base';
-import { goHome, goSignup } from '../navigation';
+import { goHome, goSignup, goHomeAdmin } from '../navigation';
 import AppUser from "../models/AppUser";
 import { MAIN_THEME_COLOR } from '../constants';
+import { observer } from 'mobx-react/native';
 
+@observer
 export default class Login extends Component {
     constructor(props) {
         super(props);
@@ -28,7 +30,11 @@ export default class Login extends Component {
         const { email } = this.state;
         this.setState({isLoading: true});
         AppUser.logon(email).then(res =>{
-            goHome();
+            if(AppUser.isAdmin){
+                goHomeAdmin();
+            }else{
+                goHome();  
+            }
             this.setState({isLoading: false});
         }).catch(e => {
             let title = "Error";

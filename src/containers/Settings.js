@@ -9,7 +9,9 @@ import {
 import { Container, Content, ListItem, Text, Separator } from 'native-base';
 import AppUser from "../models/AppUser";
 import { goLogin } from '../navigation';
+import { observer } from 'mobx-react/native';
 
+@observer
 export default class Settings extends Component {
   static get options() {
     return {

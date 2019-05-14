@@ -101,6 +101,7 @@ export default class HabitForm extends Component {
   updateHabit = async () => {
     try {
       const { habit } = this.state;
+      console.log(habit)
       let data = await HabitStore.updateHabit(AppUser.id, habit.id, {
         ...habit,
         userID: AppUser.id

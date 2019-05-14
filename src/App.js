@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Navigation } from 'react-native-navigation';
 import { registerScreens } from './screens';
-import { goLogin, goHome } from './navigation';
+import { goLogin, goHome, goHomeAdmin } from './navigation';
 import AppUser from "./models/AppUser";
 
 registerScreens();
@@ -15,10 +15,13 @@ class App extends Component {
 	startApp() {
 		Navigation.events().registerAppLaunchedListener( async () => {
 			let user = await AppUser.getUser();
-			if(user !== null){
-				goHome();
-			}else{
+			if(user == null){
 				goLogin();
+			}
+			else if (user.isAdmin){
+				goHomeAdmin();
+			}else{
+				goHome();
 			}
 		});
 	}

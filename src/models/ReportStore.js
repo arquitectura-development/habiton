@@ -37,6 +37,42 @@ class ReportStore {
         })
     }
 
+    @action
+    getTasksReport(userId) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const { data } = await api.get(
+                `/admin/reports/tasks?userId=${userId}`
+                );
+                console.log("TASK REPORT DATA")
+                console.log(data)
+                this.tasksReport = data;
+                resolve(data);
+            }
+            catch(e) {
+                reject(e);
+            }
+        })
+    }
+
+    @action
+    getHabitsReport(userId) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const { data } = await api.get(
+                `/admin/reports/habits?userId=${userId}`
+                );
+                console.log("HABITS REPORT DATA")
+                console.log(data)
+                this.habitsReport = data;
+                resolve(data);
+            }
+            catch(e) {
+                reject(e);
+            }
+        })
+    }
+
 }
 
 export default new ReportStore();
